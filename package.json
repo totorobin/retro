@@ -1,0 +1,22 @@
+{
+  "name": "knightmare-chess",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "pnpm run --parallel dev",
+    "test": "pnpm bddgen && pnpm playwright test",
+    "back": "pnpm run --filter \"@knightmare-chess/back\" dev",
+    "front": "pnpm run --filter \"@knightmare-chess/front\" dev"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@cucumber/cucumber": "^11.0.1",
+    "@playwright/test": "^1.47.2",
+    "playwright-bdd": "^7.5.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.6.2"
+  }
+}
