@@ -6,6 +6,7 @@ import LoginForm from "./components/LoginForm.vue";
 import ListPlayers from "./components/ListPlayers.vue";
 import LoggedUser from "./components/LoggedUser.vue";
 import {computed} from "vue";
+import ReconnectionAlert from "./components/ReconnectionAlert.vue";
 
 const connectionStore = useConnectionStore()
 const userStore = useUserStore()
@@ -21,6 +22,7 @@ const userLogged = computed(() => userStore.me?.loggedIn )
 
 <template>
   <LoginForm v-if="!userLogged"/>
+  <ReconnectionAlert />
   <div class="header"><LoggedUser /></div>
   <div class="main">
     <div>

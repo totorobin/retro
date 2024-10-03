@@ -1,6 +1,7 @@
 export interface User {
     uuid: string;
     name: string;
+    picture: string
     playing: boolean;
     loggedIn: boolean;
 }

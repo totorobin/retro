@@ -12,7 +12,8 @@
     "pinia": "^2.2.2",
     "socket.io-client": "^4.8.0",
     "uuid": "^10.0.0",
-    "vue": "^3.4.37"
+    "vue": "^3.4.37",
+    "vue3-google-login": "^2.0.33"
   },
   "devDependencies": {
     "@knightmare-chess/shared": "workspace:^1.0.0",

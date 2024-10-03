@@ -1,26 +1,27 @@
 <template>
   <div class="full-screen">
     <div>
-      <div>Saisissez votre nom</div>
-      <input v-model="name" pw-id="loginform-username-input"/>
-      <button @click="login" pw-id="loginform-validate">login</button>
+      <GoogleLogin :callback="login" prompt auto-login >
+        <div>Connectez vous via Google</div>
+      </GoogleLogin>
     </div>
   </div>
 </template>
 <script setup lang="ts">
+import {useConnectionStore} from "../stores/connection.ts";
+import {type CallbackTypes, GoogleLogin} from "vue3-google-login";
 
-import {useUserStore} from "../stores/users.ts";
-import { ref} from "vue";
-
-const userStore = useUserStore()
-const name = ref<string>( userStore.me?.name || '')
-const login = () => {
-  userStore.login(name.value)
+const { connect } = useConnectionStore()
+const login : CallbackTypes.CredentialCallback = (res) => {
+  connect(res.credential)
 }
 </script>
 <style lang="css">
 .full-screen {
   position: fixed;
+  top:0;
+  left:0;
+  margin: 0;
   place-items: center;
   min-width: 100vw;
   min-height: 100vh;

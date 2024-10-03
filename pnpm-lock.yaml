@@ -29,6 +29,9 @@ importers:
       express:
         specifier: ^4.21.0
         version: 4.21.0
+      jose:
+        specifier: ^5.9.3
+        version: 5.9.3
       nodemon:
         specifier: ^3.1.7
         version: 3.1.7
@@ -66,6 +69,9 @@ importers:
       vue:
         specifier: ^3.4.37
         version: 3.5.10(typescript@5.6.2)
+      vue3-google-login:
+        specifier: ^2.0.33
+        version: 2.0.33(vue@3.5.10(typescript@5.6.2))
     devDependencies:
       '@knightmare-chess/shared':
         specifier: workspace:^1.0.0
@@ -1021,6 +1027,9 @@ packages:
   jackspeak@3.4.3:
     resolution: {integrity: sha512-OGlZQpz2yfahA/Rd1Y8Cd9SIEsqvXkLVoSw/cgwhnhFMDbsQFeZYoJJ7bIZBS9BcamUW96asq/npPWugM+RQBw==}
 
+  jose@5.9.3:
+    resolution: {integrity: sha512-egLIoYSpcd+QUF+UHgobt5YzI2Pkw/H39ou9suW687MY6PmCwPmkNV/4TNjn1p2tX5xO3j0d0sq5hiYE24bSlg==}
+
   js-tokens@4.0.0:
     resolution: {integrity: sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==}
 
@@ -1641,6 +1650,11 @@ packages:
     hasBin: true
     peerDependencies:
       typescript: '>=5.0.0'
+
+  vue3-google-login@2.0.33:
+    resolution: {integrity: sha512-Hx3JJUREXWCFOOB4AzZKy/x7C+X18kxmT0AquBekm0TRubp11nrWijOLEgmhuij48dQPNumyaAi5IQAeDKk7yw==}
+    peerDependencies:
+      vue: ^3.0.3
 
   vue@3.5.10:
     resolution: {integrity: sha512-Vy2kmJwHPlouC/tSnIgXVg03SG+9wSqT1xu1Vehc+ChsXsRd7jLkKgMltVEFOzUdBr3uFwBCG+41LJtfAcBRng==}
@@ -2676,6 +2690,8 @@ snapshots:
     optionalDependencies:
       '@pkgjs/parseargs': 0.11.0
 
+  jose@5.9.3: {}
+
   js-tokens@4.0.0: {}
 
   json-parse-even-better-errors@2.3.1: {}
@@ -3261,6 +3277,10 @@ snapshots:
       '@vue/language-core': 2.1.6(typescript@5.6.2)
       semver: 7.6.3
       typescript: 5.6.2
+
+  vue3-google-login@2.0.33(vue@3.5.10(typescript@5.6.2)):
+    dependencies:
+      vue: 3.5.10(typescript@5.6.2)
 
   vue@3.5.10(typescript@5.6.2):
     dependencies:
