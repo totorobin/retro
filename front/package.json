@@ -16,7 +16,7 @@
     "vue3-google-login": "^2.0.33"
   },
   "devDependencies": {
-    "@retroworkspace:^1.0.0",
+    "@retro/shared":"^1.0.0",
     "@types/uuid": "^10.0.0",
     "@vitejs/plugin-vue": "^5.1.2",
     "typescript": "^5.5.3",
