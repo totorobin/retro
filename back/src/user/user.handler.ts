@@ -1,5 +1,5 @@
 import {Components} from "../app";
-import {User} from "@knightmare-chess/shared";
+import {User} from "@retro/shared";
 import { v4 as uuid } from "uuid";
 import {type Config, starWars, uniqueNamesGenerator} from 'unique-names-generator';
 import { Server, Socket } from "socket.io";

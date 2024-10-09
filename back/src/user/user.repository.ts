@@ -1,4 +1,4 @@
-import {User} from "@knightmare-chess/shared";
+import {User} from "@retro
 import {Errors} from "../utils";
 
 export class UserRepository {
