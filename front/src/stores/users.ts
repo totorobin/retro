@@ -1,6 +1,6 @@
 import {defineStore} from "pinia";
 import {socket} from "../socket.ts";
-import {User} from "@knightmare-chess/shared";
+import {User} from "@retro/shared";
 import {ref} from "vue";
 
 export const useUserStore = defineStore('users', () => {

@@ -2,7 +2,7 @@
 import { ClientToServerEvents,
     ServerToClientEvents,
     InterServerEvents,
-    SocketData } from '@knightmare-chess/shared'
+    SocketData } from '@retro/shared'
 import { Server as HttpServer } from "http";
 import {Server, ServerOptions} from "socket.io";
 import {UserRepository} from "./user/user.repository";

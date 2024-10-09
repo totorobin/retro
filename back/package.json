@@ -1,5 +1,5 @@
 {
-  "name": "@knightmare-chess/back",
+  "name": "@retro/back",
   "version": "1.0.0",
   "description": "",
   "main": "index.ts",
@@ -19,7 +19,7 @@
     "uuid": "^10.0.0"
   },
   "devDependencies": {
-    "@knightmare-chess/shared": "workspace:^1.0.0",
+    "@retro/shared": "workspace:^1.0.0",
     "@types/express": "^5.0.0",
     "@types/uuid": "^10.0.0"
   }
