@@ -2,6 +2,7 @@ import express, { type Express } from "express";
 import { createServer } from "http";
 import { createApplication } from "./src/app";
 import { UserRepository } from "./src/user/user.repository";
+import { RoomRepository } from "./src/room/room.repository";
 
 const app: Express = express();
 const httpServer = createServer(app);
@@ -13,6 +14,7 @@ const io = createApplication(
   httpServer,
   {
     userRepo: new UserRepository(),
+    roomRepo: new RoomRepository(),
   },
   {}
 );

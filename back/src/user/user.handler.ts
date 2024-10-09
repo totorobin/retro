@@ -39,6 +39,7 @@ export default function ({ userRepo }: Components) {
           //TODO
         }
 
+        socket.data.userId = user.uuid;
         socket.join(`user-${user.uuid}`);
 
         // acknowledge the creation

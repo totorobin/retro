@@ -10,9 +10,12 @@ import { Server, ServerOptions } from "socket.io";
 import { UserRepository } from "./user/user.repository";
 import createUserHandler from "./user/user.handler";
 import * as jose from "jose";
+import { RoomRepository } from "./room/room.repository";
+import createRoomHandler from "./room/room.handler";
 
 export interface Components {
   userRepo: UserRepository;
+  roomRepo: RoomRepository;
 }
 
 export function createApplication(
@@ -33,6 +36,7 @@ export function createApplication(
   >(httpServer, serverOptions);
 
   const { login, logout } = createUserHandler(components);
+  const { newRoom, joinRoom } = createRoomHandler(components);
 
   io.on("connection", (socket) => {
     console.log(socket.handshake.auth); // prints { token: "abcd" }
@@ -41,6 +45,8 @@ export function createApplication(
     }
 
     socket.on("login", login(io, socket));
+    socket.on("newRoom", newRoom(io, socket));
+    socket.on("joinRoom", joinRoom(io, socket));
   });
 
   io.of("/").adapter.on("delete-room", (room: string) => {

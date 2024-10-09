@@ -13,10 +13,11 @@
     "socket.io-client": "^4.8.0",
     "uuid": "^10.0.0",
     "vue": "^3.4.37",
+    "vue-router": "4",
     "vue3-google-login": "^2.0.33"
   },
   "devDependencies": {
-    "@retro/shared":"^1.0.0",
+    "@retro/shared": "^1.0.0",
     "@types/uuid": "^10.0.0",
     "@vitejs/plugin-vue": "^5.1.2",
     "typescript": "^5.5.3",
