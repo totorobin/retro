@@ -1,15 +1,15 @@
-import { createMemoryHistory, createRouter } from "vue-router";
+import { createWebHistory, createRouter } from "vue-router";
 
 import HomeView from "./pages/HomeView.vue";
-import RoomView from "./pages/RoomView.vue";
+import RoomView from "./pages/BoardView.vue";
 
 const routes = [
   { path: "/", component: HomeView },
-  { path: "/r/:roomId", component: RoomView, props: true },
+  { path: "/r/:boardId", component: RoomView, props: true },
 ];
 
 const router = createRouter({
-  history: createMemoryHistory(),
+  history: createWebHistory(import.meta.env.BASE_URL),
   routes,
 });
 

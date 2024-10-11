@@ -1,12 +1,16 @@
 import {defineStore} from "pinia";
-import {reactive} from "vue";
+import {computed, reactive} from "vue";
 import {socket} from "../socket.ts";
 
 export const useConnectionStore = defineStore('connection', () => {
-    const state = reactive({
+    const state = reactive<{
+        connected: boolean,
+        firstConnection: boolean,
+        token: string | null
+    }>({
         connected: false,
         firstConnection: true,
-        token: ''
+        token: null
     })
 
     const bindEvents = () => {
@@ -52,6 +56,7 @@ export const useConnectionStore = defineStore('connection', () => {
         bindEvents,
         connect,
         disconnect,
-        state
+        state,
+        loggedIn : computed(() => state.token !== null),
     }
 })

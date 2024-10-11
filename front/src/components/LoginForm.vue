@@ -26,7 +26,6 @@ const login : CallbackTypes.CredentialCallback = (res) => {
   min-width: 100vw;
   min-height: 100vh;
   background-color: #242424;
-  z-index: 100;
   padding-top: 30%;
 }
 </style>

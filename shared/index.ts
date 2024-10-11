@@ -6,24 +6,25 @@ export interface User {
   loggedIn: boolean;
 }
 
-export interface Room {
+export interface Board {
     name: string
-    users: List<User>
+    users: Array<User>
 }
 
 export interface ServerToClientEvents {
   logged: (me: User) => void;
   players: (players: Array<User>) => void;
-  room: (room: Room) => void;
+  board: (room: Board) => void;
+  kickOut: () => void;
 }
 
 export interface ClientToServerEvents {
   login: (me: Partial<User>) => void;
-  newRoom: (
-    roomName: string | null,
-    callback: (roomName: string) => void
+  newBoard: (
+      boardId: string | null,
+    callback: (boardId: string) => void
   ) => void;
-  joinRoom: (roomName: string)
+  joinBoard: (boardId: string) => void;
 }
 
 export interface InterServerEvents {

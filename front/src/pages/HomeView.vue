@@ -8,19 +8,17 @@
     </a>
   </div>
   <ListPlayers />
-  <Button @click="createRoom">Create Room</Button>
+  <Button @click="createBoard">Create Board</Button>
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
-import CurentRoom from "../components/CurentRoom.vue";
 import ListPlayers from "../components/ListPlayers.vue";
-import { useRoomStore } from "../stores/room.ts";
+import { useBoardStore } from "../stores/board.ts";
 
-const roomStore = useRoomStore();
+const boardStore = useBoardStore();
 
-const createRoom = () => {
-  roomStore.createRoom();
+const createBoard = () => {
+  boardStore.createBoard();
 };
 </script>
 
