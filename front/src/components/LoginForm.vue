@@ -13,6 +13,11 @@ import {type CallbackTypes, GoogleLogin} from "vue3-google-login";
 
 const { connect } = useConnectionStore()
 const login : CallbackTypes.CredentialCallback = (res) => {
+  console.log(res)
+  if(!res.credential) {
+    console.log("erreur login google")
+    return;
+  }
   connect(res.credential)
 }
 </script>

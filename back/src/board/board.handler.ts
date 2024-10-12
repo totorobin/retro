@@ -39,8 +39,11 @@ export default function ({ userRepo, boardRepo }: Components) {
               return
           }
 
-        board.users.push(await userRepo.findById(socket.data.userId));
-        await boardRepo.save(board);
+          // si nouvel utilisateur : mise a jour du board
+          if(!board.users.find(u => u.uuid === socket.data.userId)) {
+              board.users.push(await userRepo.findById(socket.data.userId));
+              await boardRepo.save(board);
+          }
 
         // socket est lié à la board
         socket.join(`board-${boardId}`);
