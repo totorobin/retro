@@ -13,6 +13,7 @@
   "license": "ISC",
   "dependencies": {
     "express": "^4.21.0",
+    "jose": "^5.9.3",
     "nodemon": "^3.1.7",
     "socket.io": "^4.8.0",
     "unique-names-generator": "^4.7.1",
