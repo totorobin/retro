@@ -2,16 +2,15 @@ import {
   ClientToServerEvents,
   ServerToClientEvents,
   InterServerEvents,
-  SocketData,
-  User,
+  SocketData
 } from "@retro/shared";
 import { Server as HttpServer } from "http";
 import { Server, ServerOptions } from "socket.io";
 import { UserRepository } from "./user/user.repository";
 import createUserHandler from "./user/user.handler";
-import * as jose from "jose";
 import { BoardRepository } from "./board/board.repository";
 import createBoardHandler from "./board/board.handler";
+import { getUserData } from "../auth/google-auth";
 
 export interface Components {
   userRepo: UserRepository;
@@ -40,9 +39,15 @@ export function createApplication(
 
   io.on("connection", (socket) => {
     console.log(socket.handshake.auth); // prints { token: "abcd" }
-    if (socket.handshake.auth) {
-      login(io, socket)(generateUserFromJwt(socket.handshake.auth.token));
-    }
+
+    getUserData(socket.handshake.auth)
+      .then((user) => login(io, socket)(user))
+      .catch((e) => {
+      console.error('erreur de connection',e)
+      socket.disconnect(true)
+    })
+
+    
 
     socket.on("login", login(io, socket));
     socket.on("newBoard", newBoard(io, socket));
@@ -59,18 +64,3 @@ export function createApplication(
 
   return io;
 }
-
-const generateUserFromJwt = (token: string): User => {
-  try {
-    const claims = jose.decodeJwt(token);
-
-    return {
-      uuid: claims.sub,
-      name: claims.name,
-      picture: claims.picture,
-    } as User;
-  } catch (e) {
-    console.error(e);
-    return {} as User;
-  }
-};

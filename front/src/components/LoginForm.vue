@@ -1,7 +1,7 @@
 <template>
   <div class="full-screen">
     <div>
-      <GoogleLogin :callback="login" prompt auto-login >
+      <GoogleLogin :callback="login" prompt auto-login popup-type="TOKEN" >
         <div>Connectez vous via Google</div>
       </GoogleLogin>
     </div>
@@ -14,11 +14,11 @@ import {type CallbackTypes, GoogleLogin} from "vue3-google-login";
 const { connect } = useConnectionStore()
 const login : CallbackTypes.CredentialCallback = (res) => {
   console.log(res)
-  if(!res.credential) {
+  if(!res.credential && !res.code && !res.access_token) {
     console.log("erreur login google")
     return;
   }
-  connect(res.credential)
+  connect(res)
 }
 </script>
 <style lang="css">

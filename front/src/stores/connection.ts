@@ -6,11 +6,11 @@ export const useConnectionStore = defineStore('connection', () => {
     const state = reactive<{
         connected: boolean,
         firstConnection: boolean,
-        token: string | null
+        credentials: string | null
     }>({
         connected: false,
         firstConnection: true,
-        token: null
+        credentials: null
     })
 
     const bindEvents = () => {
@@ -35,7 +35,7 @@ export const useConnectionStore = defineStore('connection', () => {
             state.connected = false
             state.firstConnection = false
             if (reason === 'io server disconnect') {
-                socket.auth = { token : state.token }
+                socket.auth = { jwt : state.credentials }
                 setTimeout(() => socket.connect(), 3000)
             }
         })
@@ -43,9 +43,17 @@ export const useConnectionStore = defineStore('connection', () => {
     }
 
 
-    const connect = (jwt: string) => {
-        state.token = jwt
-        socket.auth = { token: jwt }
+    const connect = ({credential , code, access_token }: { [keys: string]: string}) => {
+        if(credential) {
+            state.credentials = credential
+            socket.auth = { jwt: credential }
+        } else if(code) {
+            socket.auth = { code }
+        } else if(access_token) {
+            socket.auth = { token : access_token}
+        } else {
+            return
+        }
         socket.connect()
     }
     const disconnect = () => {
@@ -57,6 +65,6 @@ export const useConnectionStore = defineStore('connection', () => {
         connect,
         disconnect,
         state,
-        loggedIn : computed(() => state.token !== null),
+        loggedIn : computed(() => state.connected === true),
     }
 })
