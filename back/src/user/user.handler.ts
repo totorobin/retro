@@ -1,6 +1,7 @@
 import { Components } from "../app";
 import { User } from "@retro/shared";
 import { v4 as uuid } from "uuid";
+import { EventEmitter } from 'events'
 import {
   type Config,
   starWars,
@@ -14,7 +15,7 @@ const userNameConfig: Config = {
   length: 1,
 };
 
-export default function ({ userRepo }: Components) {
+export default function ({ userRepo }: Components, emitter: EventEmitter) {
   return {
     login: (io: Server, socket: Socket) =>
       async function (me: Partial<User>) {
@@ -44,12 +45,12 @@ export default function ({ userRepo }: Components) {
 
         // acknowledge the creation
         console.log("logged", socket.id, user);
-        io.to(`user-${user.uuid}`).emit("logged", user);
+        emitter.emit('broadcastUsers', [user.uuid])
 
         // notify the other users
-        const players = await userRepo.findAll();
-        console.log("broadcast players : ", players);
-        io.emit("players", players);
+
+        emitter.emit('broadcastAllUsers')
+
       },
     logout: (io: Server) =>
       async function (uuid: string) {
@@ -57,10 +58,9 @@ export default function ({ userRepo }: Components) {
           const user = await userRepo.findById(uuid);
           user.loggedIn = false;
 
+          emitter.emit('broadcastBoardsFromUser', uuid)
           // notify the other users
-          const players = await userRepo.findAll();
-          console.log("broadcast players : ", players);
-          io.emit("players", players);
+          emitter.emit('broadcastAllUsers')
         } catch (e) {
           console.error(e);
         }
