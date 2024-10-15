@@ -1,9 +1,10 @@
 import { v4 as uuid } from "uuid";
 import { Components } from "../app";
 import { Server, Socket } from "socket.io";
-import { Board } from "@retro/shared";
+import { EventEmitter } from 'events'
+import { SavedBoard } from "./board.repository";
 
-export default function ({ userRepo, boardRepo }: Components) {
+export default function ({ userRepo, boardRepo }: Components, emitter: EventEmitter) {
   return {
     newBoard: (io: Server, socket: Socket) =>
       async function (
@@ -14,9 +15,9 @@ export default function ({ userRepo, boardRepo }: Components) {
           boardId = uuid();
         }
 
-        const board: Board = {
-          name: boardId,
-          users: [await userRepo.findById(socket.data.userId)],
+        const board: SavedBoard = {
+          uuid: boardId,
+          users: [socket.data.userId],
         };
 
         await boardRepo.save(board);
@@ -25,12 +26,12 @@ export default function ({ userRepo, boardRepo }: Components) {
 
         callback(boardId);
 
-        io.to(`board-${boardId}`).emit("board", board);
+        emitter.emit('broadcastBoards', [boardId])
       },
     joinBoard: (io: Server, socket: Socket) =>
       async function (boardId: string) {
         // mise a jour de la board
-          let board : Board;
+          let board : SavedBoard;
           try {
               board = await boardRepo.findById(boardId);
           } catch (e) {
@@ -40,8 +41,8 @@ export default function ({ userRepo, boardRepo }: Components) {
           }
 
           // si nouvel utilisateur : mise a jour du board
-          if(!board.users.find(u => u.uuid === socket.data.userId)) {
-              board.users.push(await userRepo.findById(socket.data.userId));
+          if(!board.users.find(uuid => uuid === socket.data.userId)) {
+              board.users.push(socket.data.userId);
               await boardRepo.save(board);
           }
 
@@ -49,7 +50,7 @@ export default function ({ userRepo, boardRepo }: Components) {
         socket.join(`board-${boardId}`);
 
         // toutes les sockets liés à la board sont mise a jour avec le nouvel état
-        io.to(`board-${boardId}`).emit("board", board);
+        emitter.emit('broadcastBoards', [boardId])
       },
   };
 }

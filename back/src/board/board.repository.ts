@@ -1,24 +1,33 @@
-import { Board } from "@retro/shared";
 import { Errors } from "../utils";
 
-export class BoardRepository {
-  private readonly board: Map<string, Board> = new Map();
 
-  findAll(): Promise<Board[]> {
+export interface SavedBoard {
+  uuid: string,
+  users: string[]
+}
+
+export class BoardRepository {
+  private readonly board: Map<string, SavedBoard> = new Map();
+
+  findAll(): Promise<SavedBoard[]> {
     const entities = Array.from(this.board.values());
     return Promise.resolve(entities);
   }
 
-  findById(id: string): Promise<Board> {
-    if (this.board.has(id)) {
-      return Promise.resolve(this.board.get(id)!);
+  findById(uuid: string): Promise<SavedBoard> {
+    if (this.board.has(uuid)) {
+      return Promise.resolve(this.board.get(uuid)!);
     } else {
       return Promise.reject(Errors.ENTITY_NOT_FOUND);
     }
   }
 
-  save(entity: Board): Promise<void> {
-    this.board.set(entity.name, entity);
+  save(entity: SavedBoard): Promise<void> {
+    this.board.set(entity.uuid, entity);
     return Promise.resolve();
+  }
+  findAllByUser(uuid: string) : Promise<SavedBoard[]> {
+    const entities = Array.from(this.board.values()).filter(b => b.users.includes(uuid));
+    return Promise.resolve(entities);
   }
 }
