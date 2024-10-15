@@ -1,7 +1,7 @@
 <template>
   <div v-if="board">
     <UsersMenu class="panel-right-top" :users="boardStore.board?.users"></UsersMenu>
-    vous êtes connecter au board {{ board.name }}
+    vous êtes connectés au board {{ board.name }}
   </div>
 </template>
 
