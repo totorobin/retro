@@ -11,6 +11,8 @@ import createUserHandler from "./user/user.handler";
 import { BoardRepository } from "./board/board.repository";
 import createBoardHandler from "./board/board.handler";
 import { getUserData } from "../auth/google-auth";
+import createEventHandler from './events/broadcast.events'
+
 
 export interface Components {
   userRepo: UserRepository;
@@ -34,8 +36,10 @@ export function createApplication(
     SocketData
   >(httpServer, serverOptions);
 
-  const { login, logout } = createUserHandler(components);
-  const { newBoard, joinBoard } = createBoardHandler(components);
+  const emitter = createEventHandler(io, components);
+
+  const { login, logout } = createUserHandler(components, emitter);
+  const { newBoard, joinBoard } = createBoardHandler(components, emitter);
 
   io.on("connection", (socket) => {
     console.log(socket.handshake.auth); // prints { token: "abcd" }
