@@ -1,36 +1,36 @@
 <template>
   <div class="full-screen">
-    <div>
-      <GoogleLogin :callback="login" prompt auto-login >
-        <div>Connectez vous via Google</div>
-      </GoogleLogin>
-    </div>
+    <GoogleLogin :callback="login" prompt auto-login popup-type="TOKEN" >
+      <div title="Connectez vous via Google"><font-awesome-icon class="loginButton" :icon="faGoogle" style="" /></div>
+    </GoogleLogin>
   </div>
 </template>
 <script setup lang="ts">
 import {useConnectionStore} from "../stores/connection.ts";
 import {type CallbackTypes, GoogleLogin} from "vue3-google-login";
+import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
+import { faGoogle } from "@fortawesome/free-brands-svg-icons";
 
 const { connect } = useConnectionStore()
-const login : CallbackTypes.CredentialCallback = (res) => {
+const login : CallbackTypes.CredentialCallback | CallbackTypes.CodeResponseCallback | CallbackTypes.TokenResponseCallback = (res: {credential?: string, code?: string, access_token?: string}) => {
   console.log(res)
-  if(!res.credential) {
+  if(!res.credential && !res.code && !res.access_token) {
     console.log("erreur login google")
     return;
   }
-  connect(res.credential)
+  connect(res)
 }
 </script>
-<style lang="css">
+<style lang="css" scoped>
 .full-screen {
-  position: fixed;
-  top:0;
-  left:0;
-  margin: 0;
-  place-items: center;
-  min-width: 100vw;
-  min-height: 100vh;
-  background-color: #242424;
-  padding-top: 30%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+.loginButton {
+  color: var(--font-color);
+  font-size: xxx-large;
+  cursor: pointer;
 }
 </style>

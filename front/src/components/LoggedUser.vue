@@ -1,5 +1,5 @@
 <template>
-  <div class="loggedUser">
+  <div class="loggedUser panel-top-right">
     <img :src="picture" /><div pw-id="user-card">{{ userName }}</div>
   </div>
 </template>
@@ -19,8 +19,6 @@ const picture = computed(() => userStore.me?.picture || '')
   display: flex;
   flex-direction: row-reverse;
   align-items: center;
-  border: whitesmoke solid 1px;
-  border-radius: 5px;
 }
 img {
   margin: 5px;
