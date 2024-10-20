@@ -8,7 +8,7 @@ import {defineBddConfig} from "playwright-bdd";
 // require('dotenv').config();
 
 const testDir = defineBddConfig({
-    features:  "tests/features/",
+    features: "tests/features/",
     steps: "tests/steps/*.ts",
 });
 /**

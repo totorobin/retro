@@ -1,14 +1,15 @@
 <template>
   <div>
-    <div v-for="user in users"  class="user" :class="{ disconnected: !user.loggedIn}">
-      <img :src="user.picture" :title="user.name"  :alt="user.name"/><font-awesome-icon class="dot" :icon="faCircle" size="xs"/>
+    <div v-for="user in users" :class="{ disconnected: !user.loggedIn}" class="user">
+      <img :alt="user.name" :src="user.picture" :title="user.name"/>
+      <font-awesome-icon :icon="faCircle" class="dot" size="xs"/>
     </div>
   </div>
 </template>
 
-<script setup lang="ts">
-import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
-import { faCircle } from "@fortawesome/free-solid-svg-icons";
+<script lang="ts" setup>
+import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
+import {faCircle} from "@fortawesome/free-solid-svg-icons";
 import {User} from "@retro/shared";
 
 defineProps<{
@@ -24,12 +25,14 @@ defineProps<{
   width: 30px;
   height: 30px;
   margin: 10px;
+
   img {
 
-     width: 30px;
-     height: 30px;
-     border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
   }
+
   .dot {
     position: absolute;
     bottom: 0;
@@ -38,10 +41,12 @@ defineProps<{
     color: darkgreen;
   }
 }
+
 .disconnected {
   img {
     opacity: 50%;
   }
+
   .dot {
     color: darkred;
   }

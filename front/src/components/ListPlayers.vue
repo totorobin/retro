@@ -1,10 +1,13 @@
 <template>
   <div>
-    <div class="row" v-for="p in players" :key="p.uuid"><div>{{ p.name + (p.uuid === me?.uuid ? ' (vous) ': '') }}</div><div>{{ ( p.loggedIn ? '🔗' : '⛓️‍💥')}}</div></div>
+    <div v-for="p in players" :key="p.uuid" class="row">
+      <div>{{ p.name + (p.uuid === me?.uuid ? ' (vous) ' : '') }}</div>
+      <div>{{ (p.loggedIn ? '🔗' : '⛓️‍💥') }}</div>
+    </div>
   </div>
 </template>
 
-<script setup lang="ts">
+<script lang="ts" setup>
 import {useUserStore} from "../stores/users.ts";
 import {computed} from "vue";
 

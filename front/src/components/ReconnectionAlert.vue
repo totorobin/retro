@@ -2,7 +2,7 @@
   <div v-if="reconnecting" class="reconnection-alert">tentative de reconnection</div>
 </template>
 
-<script setup lang="ts">
+<script lang="ts" setup>
 
 import {useConnectionStore} from "../stores/connection.ts";
 import {computed} from "vue";

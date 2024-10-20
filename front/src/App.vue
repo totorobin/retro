@@ -1,12 +1,11 @@
-<script setup lang="ts">
-import { useConnectionStore } from "./stores/connection.ts";
-import { socket } from "./socket.ts";
-import { useUserStore } from "./stores/users.ts";
-import { useBoardStore } from "./stores/board.ts";
+<script lang="ts" setup>
+import {useConnectionStore} from "./stores/connection.ts";
+import {socket} from "./socket.ts";
+import {useUserStore} from "./stores/users.ts";
+import {useBoardStore} from "./stores/board.ts";
 import LoginForm from "./components/LoginForm.vue";
 import LoggedUser from "./components/LoggedUser.vue";
 import ReconnectionAlert from "./components/ReconnectionAlert.vue";
-import { ref } from 'vue'
 
 const connectionStore = useConnectionStore();
 const userStore = useUserStore();
@@ -24,15 +23,17 @@ roomStore.bindEvents();
 
 <template>
   <div>
-    <LoginForm v-if="!connectionStore.loggedIn" />
+    <LoginForm v-if="!connectionStore.loggedIn"/>
     <div v-else-if="!connectionStore.state.connected && connectionStore.state.firstConnection">
       Connecting
     </div>
     <div v-else>
-      <ReconnectionAlert />
-      <div class="header"><LoggedUser /></div>
+      <ReconnectionAlert/>
+      <div class="header">
+        <LoggedUser/>
+      </div>
       <div class="main">
-        <RouterView />
+        <RouterView/>
       </div>
     </div>
   </div>
