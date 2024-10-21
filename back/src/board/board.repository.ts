@@ -1,33 +1,36 @@
-import { Errors } from "../utils";
+import {Errors} from "../utils";
+import {BoardComponent} from "@retro/shared";
 
 
 export interface SavedBoard {
-  uuid: string,
-  users: string[]
+    uuid: string,
+    users: string[],
+    components: BoardComponent[],
 }
 
 export class BoardRepository {
-  private readonly board: Map<string, SavedBoard> = new Map();
+    private readonly board: Map<string, SavedBoard> = new Map(); 
 
-  findAll(): Promise<SavedBoard[]> {
-    const entities = Array.from(this.board.values());
-    return Promise.resolve(entities);
-  }
-
-  findById(uuid: string): Promise<SavedBoard> {
-    if (this.board.has(uuid)) {
-      return Promise.resolve(this.board.get(uuid)!);
-    } else {
-      return Promise.reject(Errors.ENTITY_NOT_FOUND);
+    findAll(): Promise<SavedBoard[]> {
+        const entities = Array.from(this.board.values());
+        return Promise.resolve(entities);
     }
-  }
 
-  save(entity: SavedBoard): Promise<void> {
-    this.board.set(entity.uuid, entity);
-    return Promise.resolve();
-  }
-  findAllByUser(uuid: string) : Promise<SavedBoard[]> {
-    const entities = Array.from(this.board.values()).filter(b => b.users.includes(uuid));
-    return Promise.resolve(entities);
-  }
+    findById(uuid: string): Promise<SavedBoard> {
+        if (this.board.has(uuid)) {
+            return Promise.resolve(this.board.get(uuid)!);
+        } else {
+            return Promise.reject(Errors.ENTITY_NOT_FOUND);
+        }
+    }
+
+    save(entity: SavedBoard): Promise<void> {
+        this.board.set(entity.uuid, entity);
+        return Promise.resolve();
+    }
+
+    findAllByUser(uuid: string): Promise<SavedBoard[]> {
+        const entities = Array.from(this.board.values()).filter(b => b.users.includes(uuid));
+        return Promise.resolve(entities);
+    }
 }

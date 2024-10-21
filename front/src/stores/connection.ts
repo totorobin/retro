@@ -21,7 +21,7 @@ export const useConnectionStore = defineStore('connection', () => {
 
         socket.on("connect_error", (error) => {
             if (socket.active) {
-                console.log("socket active",error.message);
+                console.log("socket active", error.message);
                 // temporary failure, the socket will automatically try to reconnect
             } else {
                 // the connection was denied by the server
@@ -35,7 +35,7 @@ export const useConnectionStore = defineStore('connection', () => {
             state.connected = false
             state.firstConnection = false
             if (reason === 'io server disconnect') {
-                socket.auth = { jwt : state.credentials }
+                socket.auth = {jwt: state.credentials}
                 setTimeout(() => socket.connect(), 3000)
             }
         })
@@ -43,14 +43,14 @@ export const useConnectionStore = defineStore('connection', () => {
     }
 
 
-    const connect = ({credential , code, access_token }: { [keys: string]: string}) => {
-        if(credential) {
+    const connect = ({credential, code, access_token}: { [keys: string]: string }) => {
+        if (credential) {
             state.credentials = credential
-            socket.auth = { jwt: credential }
-        } else if(code) {
-            socket.auth = { code }
-        } else if(access_token) {
-            socket.auth = { token : access_token}
+            socket.auth = {jwt: credential}
+        } else if (code) {
+            socket.auth = {code}
+        } else if (access_token) {
+            socket.auth = {token: access_token}
         } else {
             return
         }
@@ -65,6 +65,6 @@ export const useConnectionStore = defineStore('connection', () => {
         connect,
         disconnect,
         state,
-        loggedIn : computed(() => state.connected === true),
+        loggedIn: computed(() => state.connected === true),
     }
 })

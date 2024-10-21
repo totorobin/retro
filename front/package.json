@@ -13,6 +13,8 @@
     "@fortawesome/free-brands-svg-icons": "^6.6.0",
     "@fortawesome/free-solid-svg-icons": "^6.6.0",
     "@fortawesome/vue-fontawesome": "^3.0.8",
+    "@vueuse/components": "^11.1.0",
+    "@vueuse/core": "^11.1.0",
     "pinia": "^2.2.2",
     "socket.io-client": "^4.8.0",
     "uuid": "^10.0.0",
@@ -26,6 +28,7 @@
     "@vitejs/plugin-vue": "^5.1.2",
     "typescript": "^5.5.3",
     "vite": "^5.4.1",
+    "vite-plugin-vue-devtools": "^7.5.2",
     "vue-tsc": "^2.0.29"
   }
 }
