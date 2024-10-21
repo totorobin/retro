@@ -2,9 +2,10 @@ import {defineStore} from "pinia";
 import {Board, PostIt} from "@retro/shared";
 import {ref} from "vue";
 import {socket} from "../socket.ts";
-import router from "../router";
+import { useRouter } from "vue-router";
 
 export const useBoardStore = defineStore("board", () => {
+    const router = useRouter();
     const board = ref<Board>();
 
     const bindEvents = () => {

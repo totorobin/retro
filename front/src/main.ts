@@ -13,8 +13,3 @@ app.use(vue3GoogleLogin, {
 });
 app.use(createPinia());
 app.mount("#app");
-
-if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-    // dark mode
-    document.body.classList.add("dark-mode");
-}

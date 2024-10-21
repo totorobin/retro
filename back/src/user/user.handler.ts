@@ -11,7 +11,7 @@ const userNameConfig: Config = {
     length: 1,
 };
 
-export default function ({userRepo}: Components, emitter: EventEmitter) {
+export default function ({userRepo, boardRepo}: Components, emitter: EventEmitter) {
     return {
         login: (io: Server, socket: Socket) =>
             async function (me: Partial<User>) {
@@ -47,6 +47,8 @@ export default function ({userRepo}: Components, emitter: EventEmitter) {
 
                 emitter.emit('broadcastAllUsers')
 
+                const boards = await boardRepo.findAllByUser(user.uuid);
+                socket.emit("boards", boards);
             },
         logout: (io: Server) =>
             async function (uuid: string) {

@@ -37,7 +37,7 @@ defineProps<{
     position: absolute;
     bottom: 0;
     right: 0;
-    font-size: small;
+    font-size: 7px;
     color: darkgreen;
   }
 }

@@ -6,14 +6,15 @@
     --yellow-post-it: yellow
 }
 
-.dark-mode {
-    --background-color: #242424;
-    --border-width: 1px;
-    --border-color: #fff;
-    --font-color: #fff;
-    --yellow-post-it: darkgoldenrod;
+@media (prefers-color-scheme: dark) {
+    :root {
+        --background-color: #242424;
+        --border-width: 1px;
+        --border-color: #fff;
+        --font-color: #fff;
+        --yellow-post-it: darkgoldenrod;
+    }
 }
-
 body {
     background-color: var(--background-color);
     color: var(--font-color);

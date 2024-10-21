@@ -28,7 +28,8 @@ export interface Board {
 export interface ServerToClientEvents {
     logged: (me: User) => void;
     players: (players: Array<User>) => void;
-    board: (room: Board) => void;
+    board: (board: Board) => void;
+    boards: (boards: Array<Board>) => void;
     kickOut: () => void;
 }
 
