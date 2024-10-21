@@ -1,7 +1,7 @@
 <template>
   <div
-      class="fixed h-1/3 z-50 context-menu"
       :style="{ top: y + 'px', left: x + 'px' }"
+      class="fixed h-1/3 z-50 context-menu"
   >
     <div
         v-for="action in actions"
@@ -13,12 +13,12 @@
   </div>
 </template>
 
-<script setup lang="ts">
-import { defineProps, defineEmits } from 'vue';
+<script lang="ts" setup>
+import {defineEmits, defineProps} from 'vue';
 
-const { actions, x, y } = defineProps<{ actions: Array<{label: string, action: string}>, x: number, y: number }>();
+const {actions, x, y} = defineProps<{ actions: Array<{ label: string, action: string }>, x: number, y: number }>();
 const emit = defineEmits<{
-  'action-clicked' : [action: string]
+  'action-clicked': [action: string]
 }>();
 
 const emitAction = (action: string) => {

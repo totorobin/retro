@@ -26,7 +26,7 @@ const postIts = computed(() => board.value?.components?.filter((c) => c.type ===
 
 const createPostIt = (event: MouseEvent) => {
   console.log("createPostIt", event);
-  const pos: number[] = [(event.pageX-20), (event.pageY-15)];
+  const pos: number[] = [(event.pageX - 20), (event.pageY - 15)];
   boardStore.createPostIt(pos, (id: string) => {
     openEditor(id)
   });

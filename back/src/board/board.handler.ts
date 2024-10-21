@@ -87,7 +87,7 @@ export default function ({userRepo, boardRepo}: Components, emitter: EventEmitte
                 }
 
                 const originalComponent = board.components.find(c => c.id === component.id);
-                if(originalComponent && originalComponent.owner === socket.data.userId) {
+                if (originalComponent && originalComponent.owner === socket.data.userId) {
                     Object.assign(originalComponent, component);
                     await boardRepo.save(board)
                 }
@@ -108,7 +108,7 @@ export default function ({userRepo, boardRepo}: Components, emitter: EventEmitte
                 }
 
                 const indexOriginal = board.components.findIndex(c => c.id === componentId);
-                if(indexOriginal > -1 && board.components[indexOriginal].owner === socket.data.userId) {
+                if (indexOriginal > -1 && board.components[indexOriginal].owner === socket.data.userId) {
                     board.components.splice(indexOriginal, 1)
                     await boardRepo.save(board)
                 }

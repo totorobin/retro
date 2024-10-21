@@ -1,45 +1,45 @@
 <template>
-  <OnClickOutside  v-if="selected" @trigger="clickOutside" >
-    <UseDraggable :initial-value="{ x: data.position[0], y: data.position[1] }"
-                  :class="data.color"
+  <OnClickOutside v-if="selected" @trigger="clickOutside">
+    <UseDraggable :class="data.color"
+                  :initial-value="{ x: data.position[0], y: data.position[1] }"
                   class="post-it selected"
-                  @end="updatePos"
                   contenteditable
                   @blur="onEdit"
+                  @end="updatePos"
                   @contextmenu.prevent="showContextMenu($event)"
     >
       {{ text }}
-   </UseDraggable>
+    </UseDraggable>
   </OnClickOutside>
-    <div v-else :style="{left: data.position[0] + 'px', top: data.position[1] +'px'}"  :class="data.color"
-         @click="select" class="post-it">
-          {{ data.text }}
-    </div>
+  <div v-else :class="data.color" :style="{left: data.position[0] + 'px', top: data.position[1] +'px'}"
+       class="post-it" @click="select">
+    {{ data.text }}
+  </div>
 
-  <div class="overlay" @click="closeContextMenu" v-if="showMenu" />
+  <div v-if="showMenu" class="overlay" @click="closeContextMenu"/>
   <ContextMenu
       v-if="showMenu"
       :actions="contextMenuActions"
-      @action-clicked="handleActionClick"
       :x="menuX"
       :y="menuY"
       style="z-index: 50"
+      @action-clicked="handleActionClick"
   />
 
 </template>
 
 <script lang="ts" setup>
-import { UseDraggable, OnClickOutside } from '@vueuse/components'
+import {OnClickOutside, UseDraggable} from '@vueuse/components'
 import {PostIt} from "@retro/shared";
 import {ref} from "vue";
 import {type Position} from "@vueuse/core"
-import { useBoardStore} from "../stores/board.ts";
+import {useBoardStore} from "../stores/board.ts";
 import ContextMenu from "./ContextMenu.vue";
 
 const props = defineProps<{ data: PostIt }>()
 
 const text = ref('')
-const { updatePostIt , deletePostIt } = useBoardStore();
+const {updatePostIt, deletePostIt} = useBoardStore();
 const selected = ref(false)
 
 const select = () => {
@@ -48,20 +48,20 @@ const select = () => {
 }
 
 const updatePos = (position: Position, _event: PointerEvent) => {
- if(props.data.position[0] !== position.x && props.data.position[1] !== position.y) {
-   props.data.position = [position.x, position.y]
-   updatePostIt(props.data)
- }
+  if (props.data.position[0] !== position.x && props.data.position[1] !== position.y) {
+    props.data.position = [position.x, position.y]
+    updatePostIt(props.data)
+  }
 }
-const onEdit = (evt: FocusEvent & { target : { innerText: string}}) => {
+const onEdit = (evt: FocusEvent & { target: { innerText: string } }) => {
   text.value = evt.target.innerText
 }
 
 const endEdit = () => {
-  if(text.value !== props.data.text) {
+  if (text.value !== props.data.text) {
     console.log(text.value, props.data.text)
     props.data.text = text.value
-    updatePostIt({ ...props.data })
+    updatePostIt({...props.data})
   }
 }
 
@@ -74,7 +74,7 @@ const showMenu = ref(false);
 const menuX = ref(0);
 const menuY = ref(0);
 const contextMenuActions = [
-  { label: 'Delete', action: 'delete' },
+  {label: 'Delete', action: 'delete'},
 ];
 
 const showContextMenu = (event: PointerEvent) => {
@@ -91,7 +91,7 @@ const closeContextMenu = () => {
 const handleActionClick = (action: string) => {
   switch (action) {
     case 'delete':
-      if(props.data.id)
+      if (props.data.id)
         deletePostIt(props.data.id)
       break;
   }
@@ -107,12 +107,15 @@ const handleActionClick = (action: string) => {
   height: 80px;
   border: 1px solid var(--background-color);
 }
+
 .post-it.selected {
   border: 1px solid var(--border-color);
 }
+
 .yellow {
   background-color: var(--yellow-post-it);
 }
+
 .overlay {
   position: fixed;
   top: 0;

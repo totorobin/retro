@@ -1,6 +1,6 @@
 <template>
   <button @click="createBoard">Create Board</button>
-  <MyBoards v-model="boards" />
+  <MyBoards v-model="boards"/>
   <div class="panel-right-bottom">
     <ListPlayers/>
   </div>

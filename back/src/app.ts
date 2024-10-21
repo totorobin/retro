@@ -34,7 +34,13 @@ export function createApplication(
     const emitter = createEventHandler(io, components);
 
     const {login, logout} = createUserHandler(components, emitter);
-    const {newBoard, joinBoard, addComponent, updateComponent, deleteComponent } = createBoardHandler(components, emitter);
+    const {
+        newBoard,
+        joinBoard,
+        addComponent,
+        updateComponent,
+        deleteComponent
+    } = createBoardHandler(components, emitter);
 
     io.on("connection", (socket) => {
         console.log(socket.handshake.auth); // prints { token: "abcd" }
@@ -51,7 +57,7 @@ export function createApplication(
         socket.on("newBoard", newBoard(io, socket));
         socket.on("joinBoard", joinBoard(io, socket));
         socket.on('addComponent', addComponent(io, socket));
-        socket.on('updateComponent', updateComponent(io,socket))
+        socket.on('updateComponent', updateComponent(io, socket))
         socket.on('deleteComponent', deleteComponent(io, socket))
     });
 
