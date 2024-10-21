@@ -12,7 +12,7 @@
     </UseDraggable>
   </OnClickOutside>
   <div v-else :class="data.color" :style="{left: data.position[0] + 'px', top: data.position[1] +'px'}"
-       class="post-it" @click="select">
+       class="post-it" @mouseover="select">
     {{ data.text }}
   </div>
 
@@ -35,16 +35,20 @@ import {ref} from "vue";
 import {type Position} from "@vueuse/core"
 import {useBoardStore} from "../stores/board.ts";
 import ContextMenu from "./ContextMenu.vue";
+import { useUserStore } from '../stores/users.ts';
 
 const props = defineProps<{ data: PostIt }>()
 
 const text = ref('')
 const {updatePostIt, deletePostIt} = useBoardStore();
 const selected = ref(false)
+const userStore = useUserStore()
 
 const select = () => {
-  text.value = props.data.text
-  selected.value = true
+  if(userStore.me?.uuid === props.data.owner) {
+    text.value = props.data.text
+    selected.value = true
+  }
 }
 
 const updatePos = (position: Position, _event: PointerEvent) => {

@@ -3,8 +3,12 @@
     --border-width: 1px;
     --border-color: #000;
     --font-color: #333;
-    --yellow-post-it: yellow
+    --yellow-post-it: #f8f398;
+    --green-post-it: #cbf078;
+    --orange-post-it: #f1b963; 
+    --red-post-it: #e46161; 
 }
+
 
 @media (prefers-color-scheme: dark) {
     :root {
@@ -13,6 +17,9 @@
         --border-color: #fff;
         --font-color: #fff;
         --yellow-post-it: darkgoldenrod;
+        --green-post-it: #7e964b;
+        --orange-post-it: #ecb56277; 
+        --red-post-it: #e461617e; 
     }
 }
 

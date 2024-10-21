@@ -25,16 +25,12 @@ const board = computed(() => boardStore.board);
 const postIts = computed(() => board.value?.components?.filter((c) => c.type === "postIt").map(c => c as unknown as PostIt) || []);
 
 const createPostIt = (event: MouseEvent) => {
-  console.log("createPostIt", event);
   const pos: number[] = [(event.pageX - 20), (event.pageY - 15)];
   boardStore.createPostIt(pos, (id: string) => {
-    openEditor(id)
+    console.log("création du post-it", id);
   });
 }
 
-const openEditor = (id: string) => {
-  console.log("openEditor", id);
-}
 </script>
 
 <style scoped>

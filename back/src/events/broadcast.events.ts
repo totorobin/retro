@@ -13,14 +13,13 @@ export default function (io: Server, {userRepo, boardRepo}: Components) {
 
                 io.to(`user-${user.uuid}`).emit("logged", user);
             } catch (e) {
-                console.log('board %s not found, nothing to emit', userId)
+                console.log('board %s not found, nothing to emit', userId, e)
             }
         })
     });
 
     emitter.on('broadcastAllUsers', async () => {
         const players = await userRepo.findAll();
-        console.log("broadcast players : ", players);
         io.emit("players", players);
     })
 
@@ -41,7 +40,7 @@ export default function (io: Server, {userRepo, boardRepo}: Components) {
                 console.log("broadcast board : ", boardId);
                 io.to(`board-${boardId}`).emit("board", board);
             } catch (e) {
-                console.log('board %s not found, nothing to emit', boardId)
+                console.log('board %s not found, nothing to emit', boardId, e)
             }
         }
     });
@@ -52,7 +51,7 @@ export default function (io: Server, {userRepo, boardRepo}: Components) {
             emitter.emit('broadcastBoards', boards.map(b => b.uuid))
 
         } catch (e) {
-            console.log('no board found for user %s, nothing to emit', uuid)
+            console.log('no board found for user %s, nothing to emit', uuid, e)
         }
     })
 
