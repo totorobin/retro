@@ -1,20 +1,18 @@
 <template>
-  <OnClickOutside v-if="selected" @trigger="clickOutside">
-    <UseDraggable :class="data.color"
+  <OnClickOutside @trigger="clickOutside">
+    <UseDraggable :class="data.color + ' post-it' + (own ? ' own' : '') + (selected ? ' selected' : '')"
                   :initial-value="{ x: data.position[0], y: data.position[1] }"
-                  class="post-it selected"
-                  contenteditable
+                  class="post-it"
+                  :contenteditable="own && selected"
                   @blur="onEdit"
                   @end="updatePos"
+                  @click="select"
+                  :disabled="!own || selected"
                   @contextmenu.prevent="showContextMenu($event)"
     >
       {{ text }}
     </UseDraggable>
   </OnClickOutside>
-  <div v-else :class="data.color" :style="{left: data.position[0] + 'px', top: data.position[1] +'px'}"
-       class="post-it" @mouseover="select">
-    {{ data.text }}
-  </div>
 
   <div v-if="showMenu" class="overlay" @click="closeContextMenu"/>
   <ContextMenu
@@ -43,9 +41,10 @@ const text = ref('')
 const {updatePostIt, deletePostIt} = useBoardStore();
 const selected = ref(false)
 const userStore = useUserStore()
+const own = ref(userStore.me?.uuid === props.data.owner)
 
 const select = () => {
-  if(userStore.me?.uuid === props.data.owner) {
+  if(own.value) {
     text.value = props.data.text
     selected.value = true
   }
@@ -108,12 +107,32 @@ const handleActionClick = (action: string) => {
   position: fixed;
   font-size: smaller;
   width: 100px;
-  height: 80px;
-  border: 1px solid var(--background-color);
+  min-height: 80px; /* Will elongate if too much text */
+
+  padding: .25em; /* Margin between post-it border & text = 1/4 character width */
+
+  /* Borders */
+  border: 1px solid #0004;
+  margin: -1px; /* compensate for border width */
+
+  /* Manage word break properly */
+	overflow-wrap: break-word;
+
+  /* Shadow */
+  box-shadow: 0 5px 10px -5px #000;
 }
 
+.post-it.own {
+  cursor: pointer;
+}
+.post-it.own:hover {
+  border: 1px solid black;
+  margin: -1px; /* compensate for border width */
+}
 .post-it.selected {
-  border: 1px solid var(--border-color);
+  border: 2px solid var(--border-color);
+  margin: -2px; /* compensate for border width */
+  cursor: unset;
 }
 
 .yellow {
