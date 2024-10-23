@@ -13,5 +13,3 @@ démarrer le server et le client d'une simple commande
 ```shell
 pnpm dev
 ```
-
-test
