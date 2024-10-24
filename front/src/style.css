@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Redacted+Script:wght@300;400;700&display=swap');
+
 :root {
     --background-color: #f1f1f1;
     --border-width: 1px;
@@ -7,6 +9,25 @@
     --green-post-it: #cbf078;
     --orange-post-it: #f1b963; 
     --red-post-it: #e46161; 
+}
+
+
+.redacted-script-light {
+    font-family: "Redacted Script", cursive;
+    font-weight: 300;
+    font-style: normal;
+}
+
+.redacted-script-regular {
+    font-family: "Redacted Script", cursive;
+    font-weight: 400;
+    font-style: normal;
+}
+
+.redacted-script-bold {
+    font-family: "Redacted Script", cursive;
+    font-weight: 700;
+    font-style: normal;
 }
 
 

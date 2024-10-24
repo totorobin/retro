@@ -1,18 +1,14 @@
 <template>
-  <OnClickOutside @trigger="clickOutside">
-    <UseDraggable :class="data.color + ' post-it' + (own ? ' own' : '') + (selected ? ' selected' : '')"
-                  :initial-value="{ x: data.position[0], y: data.position[1] }"
-                  class="post-it"
-                  :contenteditable="own && selected"
-                  @blur="onEdit"
-                  @end="updatePos"
-                  @click="select"
-                  :disabled="!own || selected"
-                  @contextmenu.prevent="showContextMenu($event)"
-    >
-      {{ text }}
-    </UseDraggable>
-  </OnClickOutside>
+  <UseDraggable :class="[data.color , {'own': own, 'redacted-script-regular': !data.visible && !own }]"
+                :initial-value="{ x: data.position[0], y: data.position[1] }"
+                class="post-it"
+                :contenteditable="own"
+                @blur="endEdit"
+                @end="updatePos"
+                @contextmenu.prevent="showContextMenu($event)"
+  >
+    {{  hidetext }}
+  </UseDraggable>
 
   <div v-if="showMenu" class="overlay" @click="closeContextMenu"/>
   <ContextMenu
@@ -27,9 +23,9 @@
 </template>
 
 <script lang="ts" setup>
-import {OnClickOutside, UseDraggable} from '@vueuse/components'
+import {UseDraggable} from '@vueuse/components'
 import {PostIt} from "@retro/shared";
-import {ref} from "vue";
+import {ref, computed} from "vue";
 import {type Position} from "@vueuse/core"
 import {useBoardStore} from "../stores/board.ts";
 import ContextMenu from "./ContextMenu.vue";
@@ -37,18 +33,9 @@ import { useUserStore } from '../stores/users.ts';
 
 const props = defineProps<{ data: PostIt }>()
 
-const text = ref('')
 const {updatePostIt, deletePostIt} = useBoardStore();
-const selected = ref(false)
 const userStore = useUserStore()
 const own = ref(userStore.me?.uuid === props.data.owner)
-
-const select = () => {
-  if(own.value) {
-    text.value = props.data.text
-    selected.value = true
-  }
-}
 
 const updatePos = (position: Position, _event: PointerEvent) => {
   if (props.data.position[0] !== position.x && props.data.position[1] !== position.y) {
@@ -56,29 +43,30 @@ const updatePos = (position: Position, _event: PointerEvent) => {
     updatePostIt(props.data)
   }
 }
-const onEdit = (evt: FocusEvent & { target: { innerText: string } }) => {
-  text.value = evt.target.innerText
-}
 
-const endEdit = () => {
-  if (text.value !== props.data.text) {
-    console.log(text.value, props.data.text)
-    props.data.text = text.value
-    updatePostIt({...props.data})
+const endEdit = (evt: FocusEvent & { target: { innerText: string } }) => {
+  if (evt.target.innerText !== props.data.text) {
+    console.log('edit content',  props.data.text ,  evt.target.innerText)
+    props.data.text = evt.target.innerText
+    updatePostIt(props.data)
+    evt.target.innerText = props.data.text
   }
-}
-
-const clickOutside = () => {
-  selected.value = false;
-  endEdit()
 }
 
 const showMenu = ref(false);
 const menuX = ref(0);
 const menuY = ref(0);
-const contextMenuActions = [
-  {label: 'Delete', action: 'delete'},
-];
+const contextMenuActions = computed(() =>[
+   {label: 'Delete', action: 'delete'},
+   {label: props.data.visible ? 'Hide' : 'Show', action: 'toggleVisible'},
+]);
+
+const rot13 = (text: string) => text.split('')
+    .map(char => char === ' ' ? ' ' : String.fromCharCode(char.charCodeAt(0) + (char.toLowerCase() < 'n' ? 13 : -13)))
+    .join('');
+
+const hidetext = computed(() =>  (!props.data.visible && !own.value) ? rot13(props.data.text) : props.data.text);
+
 
 const showContextMenu = (event: PointerEvent) => {
   event.preventDefault();
@@ -96,6 +84,12 @@ const handleActionClick = (action: string) => {
     case 'delete':
       if (props.data.id)
         deletePostIt(props.data.id)
+      break;
+    case 'toggleVisible':
+      if(props.data.id) {
+        props.data.visible = !props.data.visible;
+        updatePostIt(props.data)
+      }
       break;
   }
   showMenu.value = false;
