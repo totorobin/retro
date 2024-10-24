@@ -1,5 +1,6 @@
 :root {
     --background-color: #f1f1f1;
+    --background-color-dark: #eaeaea;
     --border-width: 1px;
     --border-color: #000;
     --font-color: #333;
@@ -13,6 +14,7 @@
 @media (prefers-color-scheme: dark) {
     :root {
         --background-color: #242424;
+        --background-color-dark: #292929;
         --border-width: 1px;
         --border-color: #fff;
         --font-color: #fff;
@@ -37,6 +39,7 @@ body {
     bottom: 50px;
     width: 150px;
     margin-left: -150px;
+    z-index: 20;
 }
 
 .panel-right-top {
@@ -45,7 +48,7 @@ body {
     top: 50px;
     width: 50px;
     margin-left: -50px;
-
+    z-index: 20;
 }
 
 .panel-top-right {
@@ -57,4 +60,5 @@ body {
     border-radius: 0 0 0 5px;
     border-bottom: var(--border-width) solid var(--border-color);
     border-left: var(--border-width) solid var(--border-color);
+    z-index: 20;
 }

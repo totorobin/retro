@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-for="user in users" :class="{ disconnected: !user.loggedIn}" class="user">
+    <div v-for="user in users" :class="{ disconnected: !user.loggedIn}" class="user" @click="() => $emit('focusUser', user.uuid)">
       <img :alt="user.name" :src="user.picture" :title="user.name"/>
       <font-awesome-icon :icon="faCircle" class="dot" size="xs"/>
     </div>
@@ -16,6 +16,9 @@ defineProps<{
   users: Array<User>
 }>()
 
+defineEmits<{
+  focusUser: [userId :string]
+}>()
 </script>
 
 <style lang="css" scoped>
