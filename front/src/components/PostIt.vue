@@ -1,6 +1,7 @@
 <template>
+
   <OnClickOutside v-if="selected" @trigger="clickOutside">
-    <UseDraggable :class="data.color"
+    <UseDraggable :class="[data.color, $attrs.class]"
                   :initial-value="{ x: data.position[0], y: data.position[1] }"
                   class="post-it selected"
                   contenteditable
@@ -11,11 +12,10 @@
       {{ text }}
     </UseDraggable>
   </OnClickOutside>
-  <div v-else :class="data.color" :style="{left: data.position[0] + 'px', top: data.position[1] +'px'}"
+  <div v-else :class="[data.color, $attrs.class]" :style="{left: data.position[0] + 'px', top: data.position[1] +'px'}"
        class="post-it" @mouseover="select">
     {{ data.text }}
   </div>
-
   <div v-if="showMenu" class="overlay" @click="closeContextMenu"/>
   <ContextMenu
       v-if="showMenu"
@@ -139,5 +139,9 @@ const handleActionClick = (action: string) => {
 
 .overlay:hover {
   cursor: pointer;
+}
+
+.user-focused {
+  z-index: 10
 }
 </style>
