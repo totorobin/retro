@@ -16,7 +16,6 @@
        class="post-it" @mouseover="select">
     {{ data.text }}
   </div>
-  <div v-if="showMenu" class="overlay" @click="closeContextMenu"/>
   <ContextMenu
       v-if="showMenu"
       :actions="contextMenuActions"
@@ -79,6 +78,12 @@ const menuX = ref(0);
 const menuY = ref(0);
 const contextMenuActions = [
   {label: 'Delete', action: 'delete'},
+  {label: '', action: [
+      { label: ' ', style: 'background-color: var(--green-post-it); width:10px; height:10px' , action: 'color-green' },
+      { label: ' ', style: 'background-color: var(--yellow-post-it); width:10px; height:10px' , action: 'color-yellow' },
+      { label: ' ', style: 'background-color: var(--orange-post-it); width:10px; height:10px' , action: 'color-orange' },
+      { label: ' ', style: 'background-color: var(--red-post-it); width:10px; height:10px' , action: 'color-red' }
+    ]},
 ];
 
 const showContextMenu = (event: PointerEvent) => {
@@ -98,6 +103,15 @@ const handleActionClick = (action: string) => {
       if (props.data.id)
         deletePostIt(props.data.id)
       break;
+    case 'color-green':
+    case 'color-yellow':
+    case 'color-orange':
+    case 'color-red':
+      props.data.color = action.split('-')[1]
+      updatePostIt(props.data)
+      break;
+    default:
+      break;
   }
   showMenu.value = false;
 }
@@ -116,32 +130,20 @@ const handleActionClick = (action: string) => {
   border: 1px solid var(--border-color);
 }
 
+.green {
+  background-color: var(--green-post-it);
+}
 .yellow {
   background-color: var(--yellow-post-it);
 }
-
-.overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: transparent;
-  z-index: 49;
+.orange {
+  background-color: var(--orange-post-it);
 }
-
-.overlay::before {
-  content: '';
-  position: absolute;
-  width: 100%;
-  height: 100%;
-}
-
-.overlay:hover {
-  cursor: pointer;
+.red {
+  background-color: var(--red-post-it);
 }
 
 .user-focused {
-  z-index: 10
+  z-index: 1
 }
 </style>

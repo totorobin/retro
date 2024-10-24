@@ -1,16 +1,12 @@
 <template>
   <div v-if="board">
-    <UsersMenu :users="board.users" class="panel-right-top" @focusUser="focusUser"></UsersMenu>
-
     <template v-for="postIt in postIts" :key="postIt.id" >
       <PostItComp :data="postIt" :class="{ 'user-focused' : postIt.owner == focusedUser}" ></PostItComp>
     </template>
-    <div v-if="focusedUser" class="overlay-focus" >
-      <div @click="focusUser(null)">Supprimer le focus</div>
-    </div>
     <div class="board-container" @dblclick.stop="createPostIt">
-      vous êtes connectés au board {{ board.uuid }}
     </div>
+    <OverlayFocus v-if="focusedUser" closing-text="Supprimer le focus" @close="focusUser(null)"></OverlayFocus>
+    <UsersMenu :users="board.users" class="panel-right-top" @focusUser="focusUser"></UsersMenu>
   </div>
 </template>
 
@@ -20,6 +16,7 @@ import {useBoardStore} from "../stores/board.ts";
 import UsersMenu from "./UsersMenu.vue";
 import PostItComp from './PostIt.vue'
 import {type PostIt} from "@retro/shared";
+import OverlayFocus from "./OverlayFocus.vue";
 
 const boardStore = useBoardStore();
 
@@ -44,14 +41,5 @@ const focusUser = (userId : string | null) => {
 .board-container {
   width: 100vw;
   height: 100vh;
-}
-.overlay-focus {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0,0,0,0.5);
-  z-index: 9;
 }
 </style>
