@@ -31,7 +31,7 @@ const logout = () => {
   </div>
   <template v-if="menuVisible">
     <div class="overlay" @click="toggleMenu"/>
-    <menu class="panel-top-right menu">
+    <menu class="panel-top-right">
       <li @click="home">Home</li>
       <li @click="logout">Déconnexion</li>
     </menu>
@@ -41,13 +41,32 @@ const logout = () => {
 <style scoped>
 .button-menu {
   padding: 10px;
+  padding-bottom: 8px;
   background-color: var(--background-color-dark);
   height: fit-content;
+  box-shadow: -2px 2px 2px rgba(0, 0, 0, 0.2);
 }
-.menu {
-  margin-right: 50px;
+menu {
+  margin-top: 0;
+  margin-right: 52px;
   padding: 3px;
   text-align: left;
+  background-color: var(--background-color-dark);
+  box-shadow: -2px 2px 2px rgba(0, 0, 0, 0.2);
+  min-width: 20px;
+  display: inline-grid;
+  height: fit-content;
+  z-index: 25;
+}
+
+menu li {
+  padding: 5px;
+  cursor: pointer;
+  display: inline-flex;
+}
+menu li:hover {
+  background-color: var(--primary-color);
+  color: var(--background-color-dark);
 }
 
 
@@ -73,7 +92,7 @@ const logout = () => {
   position: absolute;
   height: 5px;
   width: 100%;
-  background: #d3531a;
+  background: var(--primary-color);
   border-radius: 5px;
   opacity: 1;
   left: 0;
