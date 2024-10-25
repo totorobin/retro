@@ -35,8 +35,10 @@ export function createApplication(
 
     const {login, logout} = createUserHandler(components, emitter);
     const {
+        myBoards,
         newBoard,
         joinBoard,
+        leaveBoard,
         addComponent,
         updateComponent,
         deleteComponent
@@ -56,9 +58,11 @@ export function createApplication(
         socket.on("login", login(io, socket));
         socket.on("newBoard", newBoard(io, socket));
         socket.on("joinBoard", joinBoard(io, socket));
+        socket.on('leaveBoard', leaveBoard(io, socket));
         socket.on('addComponent', addComponent(io, socket));
-        socket.on('updateComponent', updateComponent(io, socket))
-        socket.on('deleteComponent', deleteComponent(io, socket))
+        socket.on('updateComponent', updateComponent(io, socket));
+        socket.on('deleteComponent', deleteComponent(io, socket));
+        socket.on('myBoards', myBoards(io, socket));
     });
 
     io.of("/").adapter.on("delete-room", (room: string) => {
@@ -68,6 +72,23 @@ export function createApplication(
             logout(io)(userId);
         }
     });
+
+    io.of("/").adapter.on("join-room", (room: string, id: string) => {
+        console.log("joining room", room, id);
+        if (room.startsWith("board-")) {
+            const boardId = room.replace("board-", "");
+            // toutes les sockets liés à la board sont mise a jour avec le nouvel état
+            emitter.emit('broadcastBoards', [boardId])
+        }
+    })
+    io.of("/").adapter.on("leave-room", (room: string, id: string) => {
+        console.log("leaving room", room, id);
+        if (room.startsWith("board-")) {
+            const boardId = room.replace("board-", "");
+            // toutes les sockets liés à la board sont mise a jour avec le nouvel état
+            emitter.emit('broadcastBoards', [boardId])
+        }
+    })
 
     return io;
 }

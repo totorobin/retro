@@ -29,19 +29,9 @@ roomStore.bindEvents();
     </div>
     <div v-else>
       <ReconnectionAlert/>
-      <div class="header">
-        <LoggedUser/>
-      </div>
       <div class="main">
         <RouterView/>
       </div>
     </div>
   </div>
 </template>
-
-<style scoped>
-.header {
-  display: flex;
-  flex-direction: row-reverse;
-}
-</style>
