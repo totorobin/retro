@@ -22,7 +22,7 @@ export default function ({userRepo, boardRepo}: Components, emitter: EventEmitte
                         user = await userRepo.findById(user.uuid);
                         if (me.name) user.name = me.name;
                     } catch (e) {
-                        console.error(e);
+                        console.error('new user');
                     }
                 } else user.uuid = uuid();
 
@@ -44,11 +44,7 @@ export default function ({userRepo, boardRepo}: Components, emitter: EventEmitte
                 emitter.emit('broadcastUsers', [user.uuid])
 
                 // notify the other users
-
                 emitter.emit('broadcastAllUsers')
-
-                const boards = await boardRepo.findAllByUser(user.uuid);
-                socket.emit("boards", boards);
             },
         logout: (io: Server) =>
             async function (uuid: string) {

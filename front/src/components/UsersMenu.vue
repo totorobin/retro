@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-for="user in users" :class="{ disconnected: !user.loggedIn}" class="user" @click="() => $emit('focusUser', user.uuid)">
+    <div v-for="user in users" :class="{ disconnected: !user.loggedIn, me: user.uuid === me.uuid}" class="user" @click="() => $emit('focusUser', user.uuid)">
       <img :alt="user.name" :src="user.picture" :title="user.name"/>
       <font-awesome-icon :icon="faCircle" class="dot" size="xs"/>
     </div>
@@ -11,6 +11,8 @@
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 import {faCircle} from "@fortawesome/free-solid-svg-icons";
 import {User} from "@retro/shared";
+import {useUserStore} from "../stores/users.ts";
+import {computed} from "vue";
 
 defineProps<{
   users: Array<User>
@@ -19,6 +21,11 @@ defineProps<{
 defineEmits<{
   focusUser: [userId :string]
 }>()
+
+
+const userStore = useUserStore()
+const me = computed(() => userStore.me)
+
 </script>
 
 <style lang="css" scoped>
@@ -43,6 +50,15 @@ defineEmits<{
     font-size: 7px;
     color: darkgreen;
   }
+}
+
+.me::before {
+  font-size: small;
+  content: "vous";
+  position: absolute;
+  margin-right: 34px;
+  margin-top: 7px;
+  right: 0;
 }
 
 .disconnected {
