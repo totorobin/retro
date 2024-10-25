@@ -4,25 +4,26 @@ Webapp with a whiteboard shared for multiple users
 
 ## Installation
 
-```sh
-cd ../back
-npm install
+### Prerequisites
 
-cd front
-npm install
+Install pnpm
+
+```sh
+npm install -g pnpm
+```
+
+### Setup
+
+```sh
+# cd retro/
+pnpm install
 ```
 
 ## Run locally
 
 ```sh
-cd back
-npm run dev
-```
-
-in another window:
-```sh
-cd front
-npm run dev
+# cd retro/
+pnpm dev
 ```
 
 Check the url given in the frontend's logs to use app with your browser
