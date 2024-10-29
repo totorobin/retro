@@ -1,20 +1,23 @@
 <template>
-  <OnClickOutside v-if="selected" @trigger="clickOutside">
-    <UseDraggable :class="data.color"
-                  :initial-value="{ x: data.position[0], y: data.position[1] }"
-                  class="post-it selected"
-                  contenteditable
-                  @blur="onEdit"
-                  @end="updatePos"
-                  @contextmenu.prevent="showContextMenu($event)"
-    >
-      {{ text }}
-    </UseDraggable>
-  </OnClickOutside>
-  <div v-else :class="data.color" :style="{left: data.position[0] + 'px', top: data.position[1] +'px'}"
-       class="post-it" @mouseover="select">
-    {{ data.text }}
-  </div>
+  <UseDraggable class="post-it"
+                :class="[data.color, {own, editing}]"
+                :initial-value="{ x: data.position[0], y: data.position[1] }"
+                @drag="onDrag"
+                @contextmenu.prevent="showContextMenu($event)"
+                :disabled="!own || editing"
+                @end="onDrop"
+                :capture="true"
+  >
+    <OnClickOutside @trigger="onClickOutside">
+      <div class="inpostit"
+                  :contenteditable="own && editing"
+                  @click="onClick"
+                  @blur="onTextChange"
+      >
+        {{ data.text }}
+      </div>
+    </onClickOutside>
+  </UseDraggable>
 
   <div v-if="showMenu" class="overlay" @click="closeContextMenu"/>
   <ContextMenu
@@ -29,7 +32,7 @@
 </template>
 
 <script lang="ts" setup>
-import {OnClickOutside, UseDraggable} from '@vueuse/components'
+import {UseDraggable, OnClickOutside} from '@vueuse/components'
 import {PostIt} from "@retro/shared";
 import {ref} from "vue";
 import {type Position} from "@vueuse/core"
@@ -39,39 +42,42 @@ import { useUserStore } from '../stores/users.ts';
 
 const props = defineProps<{ data: PostIt }>()
 
-const text = ref('')
 const {updatePostIt, deletePostIt} = useBoardStore();
-const selected = ref(false)
+const editing = ref(false)
+const dragging = ref(false)
 const userStore = useUserStore()
+const own = ref(userStore.me?.uuid === props.data.owner)
 
-const select = () => {
-  if(userStore.me?.uuid === props.data.owner) {
-    text.value = props.data.text
-    selected.value = true
-  }
+
+const onDrag = () => {
+  dragging.value = true
+  editing.value = false
 }
-
-const updatePos = (position: Position, _event: PointerEvent) => {
+const onDrop = (position: Position, _event: PointerEvent) => {
   if (props.data.position[0] !== position.x && props.data.position[1] !== position.y) {
     props.data.position = [position.x, position.y]
     updatePostIt(props.data)
   }
-}
-const onEdit = (evt: FocusEvent & { target: { innerText: string } }) => {
-  text.value = evt.target.innerText
+  setTimeout(() => {dragging.value = false}, 100) // Delay to prevent onClick to trigger
 }
 
-const endEdit = () => {
-  if (text.value !== props.data.text) {
-    console.log(text.value, props.data.text)
-    props.data.text = text.value
-    updatePostIt({...props.data})
+
+const onClick = () => {
+  if(!dragging.value) {
+    editing.value = true
   }
 }
-
-const clickOutside = () => {
-  selected.value = false;
-  endEdit()
+const onTextChange = (evt: FocusEvent & { target: { innerText: string } }) => {
+  if (props.data.text !== evt.target.innerText) {
+    console.log("endEdit: " + props.data.text + " <- " + evt.target.innerText)
+    props.data.text = evt.target.innerText
+    updatePostIt({...props.data})
+    evt.target.innerText = props.data.text // Fix duplicating text on edit
+  }
+  editing.value = false
+}
+const onClickOutside = () => {
+  editing.value = false
 }
 
 const showMenu = ref(false);
@@ -106,14 +112,40 @@ const handleActionClick = (action: string) => {
 <style scoped>
 .post-it {
   position: fixed;
-  font-size: smaller;
-  width: 100px;
-  height: 80px;
-  border: 1px solid var(--background-color);
+
+  padding: .33em; /* Margin between post-it border & text = 1/4 character width */
+
+  /* Borders */
+  border: 1px solid #0004;
+  margin: -1px; /* compensate for border width */
+
+  /* Shadow */
+  box-shadow: 0 5px 10px -5px #000;
+}
+.post-it.own {
+  cursor: move;
+}
+.post-it.own:hover:not(.editing) {
+  border: 1px solid black;
+  margin: -1px; /* compensate for border width */
+}
+.post-it.editing {
+  border: 1px dashed var(--border-color);
+  margin: -1px; /* compensate for border width */
 }
 
-.post-it.selected {
-  border: 1px solid var(--border-color);
+.inpostit {
+  width: 100px;
+  min-height: 80px; /* Will elongate if too much text */
+  font-size: smaller;
+
+  /* Manage word break properly */
+  overflow-wrap: break-word;
+  border-radius: 1em; /* easier to dragndrop from corners */
+}
+.post-it.editing .inpostit[contenteditable] {
+  outline: 0px solid transparent;
+  cursor: text;
 }
 
 .yellow {
