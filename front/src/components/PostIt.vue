@@ -7,6 +7,7 @@
                 :disabled="!own || editing"
                 @end="onDrop"
                 :capture="true"
+                :containerElement="board"
   >
     <OnClickOutside @trigger="onClickOutside">
       <div class="inpostit"
@@ -40,7 +41,7 @@ import {useBoardStore} from "../stores/board.ts";
 import ContextMenu from "./ContextMenu.vue";
 import { useUserStore } from '../stores/users.ts';
 
-const props = defineProps<{ data: PostIt }>()
+const props = defineProps<{ data: PostIt, board: HTMLElement|null }>()
 
 const {updatePostIt, deletePostIt} = useBoardStore();
 const editing = ref(false)
@@ -111,8 +112,7 @@ const handleActionClick = (action: string) => {
 
 <style scoped>
 .post-it {
-  position: fixed;
-
+  position: absolute;
   padding: .33em; /* Margin between post-it border & text = 1/4 character width */
 
   /* Borders */
@@ -123,7 +123,7 @@ const handleActionClick = (action: string) => {
   box-shadow: 0 5px 10px -5px #000;
 }
 .post-it.own {
-  cursor: move;
+  cursor: grab;
 }
 .post-it.own:hover:not(.editing) {
   border: 1px solid black;
@@ -146,6 +146,9 @@ const handleActionClick = (action: string) => {
 .post-it.editing .inpostit[contenteditable] {
   outline: 0px solid transparent;
   cursor: text;
+}
+.post-it:active {
+  cursor: grabbing;
 }
 
 .yellow {
