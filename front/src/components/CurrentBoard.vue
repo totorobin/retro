@@ -10,10 +10,12 @@
     <div class="board-container" @dblclick.stop="createPostIt">
       <div class="moving-board" ref="draggable" :style="movableView.style.value">
         <template v-for="postIt in postIts" :key="postIt.id">
-          <PostItComp :data="postIt" :board="draggable"></PostItComp>
+          <PostItComp :data="postIt" :board="draggable" :class="{ 'user-focused' : postIt.owner == focusedUser}"></PostItComp>
         </template>
       </div>
     </div>
+    <OverlayFocus v-if="focusedUser" closing-text="Supprimer le focus" @close="focusUser(null)"></OverlayFocus>
+    <UsersMenu :users="board.users" class="panel-right-top" @focusUser="focusUser"></UsersMenu>
   </div>
 </template>
 
@@ -24,6 +26,7 @@ import UsersMenu from "./UsersMenu.vue";
 import PostItComp from './PostIt.vue'
 import {type PostIt} from "@retro/shared";
 import { useDraggable } from "@vueuse/core";
+import OverlayFocus from "./OverlayFocus.vue";
 
 const boardStore = useBoardStore();
 const board = computed(() => boardStore.board);
@@ -53,6 +56,10 @@ const createPostIt = (event: MouseEvent) => {
   });
 }
 
+const focusedUser = ref<string | null>(null)
+const focusUser = (userId : string | null) => {
+  focusedUser.value = userId;
+}
 </script>
 
 <style scoped>
@@ -60,17 +67,18 @@ const createPostIt = (event: MouseEvent) => {
   position: absolute;
   top: 0;
   width: 100vw;
-  z-index: 100;
   user-select: none;
 }
 .board-container {
   position: absolute;
+  background-color: var(--outside-board-color);
   width: 100vw;
   height: 100vh;
   top: 0;
   left: 0;
   margin: 0;
   padding: 0;
+  z-index: -1;
 }
 .moving-board {
   position: absolute;

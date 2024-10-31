@@ -1,6 +1,6 @@
 <template>
   <UseDraggable class="post-it"
-                :class="[data.color, {own, editing}]"
+                :class="[data.color, $attrs.class, {own, editing}]"
                 :initial-value="{ x: data.position[0], y: data.position[1] }"
                 @drag="onDrag"
                 @contextmenu.prevent="showContextMenu($event)"
@@ -17,18 +17,18 @@
       >
         {{ data.text }}
       </div>
-    </onClickOutside>
+    </OnClickOutside>
+
+    <ContextMenu
+        v-if="showMenu"
+        :actions="contextMenuActions"
+        :x="menuX"
+        :y="menuY"
+        @action-clicked="handleActionClick"
+    />
+      
   </UseDraggable>
 
-  <div v-if="showMenu" class="overlay" @click="closeContextMenu"/>
-  <ContextMenu
-      v-if="showMenu"
-      :actions="contextMenuActions"
-      :x="menuX"
-      :y="menuY"
-      style="z-index: 50"
-      @action-clicked="handleActionClick"
-  />
 
 </template>
 
@@ -85,7 +85,13 @@ const showMenu = ref(false);
 const menuX = ref(0);
 const menuY = ref(0);
 const contextMenuActions = [
-  {label: 'Delete', action: 'delete'},
+  {label: '🗑️ Delete', action: 'delete'},
+  {label: '', action: [
+      { label: ' ', style: 'background-color: var(--green-post-it); width:10px; height:10px' , action: 'color-green' },
+      { label: ' ', style: 'background-color: var(--yellow-post-it); width:10px; height:10px' , action: 'color-yellow' },
+      { label: ' ', style: 'background-color: var(--orange-post-it); width:10px; height:10px' , action: 'color-orange' },
+      { label: ' ', style: 'background-color: var(--red-post-it); width:10px; height:10px' , action: 'color-red' }
+    ]},
 ];
 
 const showContextMenu = (event: PointerEvent) => {
@@ -104,6 +110,15 @@ const handleActionClick = (action: string) => {
     case 'delete':
       if (props.data.id)
         deletePostIt(props.data.id)
+      break;
+    case 'color-green':
+    case 'color-yellow':
+    case 'color-orange':
+    case 'color-red':
+      props.data.color = action.split('-')[1]
+      updatePostIt(props.data)
+      break;
+    default:
       break;
   }
   showMenu.value = false;
@@ -133,7 +148,6 @@ const handleActionClick = (action: string) => {
   border: 1px dashed var(--border-color);
   margin: -1px; /* compensate for border width */
 }
-
 .inpostit {
   width: 100px;
   min-height: 80px; /* Will elongate if too much text */
@@ -151,28 +165,20 @@ const handleActionClick = (action: string) => {
   cursor: grabbing;
 }
 
+.green {
+  background-color: var(--green-post-it);
+}
 .yellow {
   background-color: var(--yellow-post-it);
 }
-
-.overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: transparent;
-  z-index: 49;
+.orange {
+  background-color: var(--orange-post-it);
+}
+.red {
+  background-color: var(--red-post-it);
 }
 
-.overlay::before {
-  content: '';
-  position: absolute;
-  width: 100%;
-  height: 100%;
-}
-
-.overlay:hover {
-  cursor: pointer;
+.user-focused {
+  z-index: 1
 }
 </style>

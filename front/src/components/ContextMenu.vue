@@ -1,25 +1,31 @@
 <template>
+  <div class="overlay" @click="closeContextMenu" @contextmenu.prevent="closeContextMenu"/>
   <div
       :style="{ top: y + 'px', left: x + 'px' }"
       class="fixed h-1/3 z-50 context-menu"
   >
-    <div
+    <template
         v-for="action in actions"
         :key="action.action"
-        @click="emitAction(action.action)"
     >
-      {{ action.label }}
-    </div>
+      <div v-if="Array.isArray(action.action)" :style="action.style">{{ action.label }}<p v-for="a in action.action" @click="emitAction(a.action)" :style="a.style">{{ a.label }}</p>
+      </div>
+      <div v-else  @click="emitAction(action.action)">{{ action.label }}</div>
+    </template>
   </div>
 </template>
 
 <script lang="ts" setup>
 import {defineEmits, defineProps} from 'vue';
 
-const {actions, x, y} = defineProps<{ actions: Array<{ label: string, action: string }>, x: number, y: number }>();
+const {actions, x, y} = defineProps<{ actions: Array<{ label: string, style: string, action: string | Array<{ label: string, style: string, action: string }>}>, x: number, y: number }>();
 const emit = defineEmits<{
   'action-clicked': [action: string]
 }>();
+
+const closeContextMenu = () => {
+  emit('action-clicked', 'close-context-menu');
+}
 
 const emitAction = (action: string) => {
   emit('action-clicked', action);
@@ -28,19 +34,60 @@ const emitAction = (action: string) => {
 
 <style scoped>
 .context-menu {
-  position: absolute;
+  font-size: smaller;
+  position: fixed;
+  border: 1px solid var(--border-color);
   background: var(--background-color);
-  border: 1px solid #ccc;
   box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
-  min-width: 10px;
+  min-width: 20px;
+  z-index: 10;
+  display: inline-grid;
 }
 
 .context-menu div {
-  padding: 10px;
-  cursor: pointer;
+  padding: 5px;
+  cursor: default;
+  display: inline-flex;
+}
+
+.context-menu div p {
+  margin: 2px;
+  display: inline-flex;
+  border: 1px solid transparent;
+}
+.context-menu div p:hover {
+  margin: 2px;
+  border: 1px solid var(--border-color);
 }
 
 .context-menu div:hover {
-  font-weight: bolder;
+  background-color: var(--background-color-dark);
 }
+
+.context-menu .action:hover {
+  cursor: pointer;
+}
+
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  z-index: 9;
+}
+
+.overlay::before {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+.overlay:hover {
+  cursor: pointer;
+}
+
 </style>
