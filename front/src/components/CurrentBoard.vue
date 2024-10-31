@@ -1,22 +1,22 @@
 <template>
   <div v-if="board">
-    <UsersMenu :users="board.users" class="panel-right-top"></UsersMenu>
-    <template v-for="postIt in postIts" :key="postIt.id">
-      <PostItComp :data="postIt"></PostItComp>
+    <template v-for="postIt in postIts" :key="postIt.id" >
+      <PostItComp :data="postIt" :class="{ 'user-focused' : postIt.owner == focusedUser}" ></PostItComp>
     </template>
-
     <div class="board-container" @dblclick.stop="createPostIt">
-      vous êtes connectés au board {{ board.uuid }}
     </div>
+    <OverlayFocus v-if="focusedUser" closing-text="Supprimer le focus" @close="focusUser(null)"></OverlayFocus>
+    <UsersMenu :users="board.users" class="panel-right-top" @focusUser="focusUser"></UsersMenu>
   </div>
 </template>
 
 <script lang="ts" setup>
-import {computed} from "vue";
+import {computed, ref} from "vue";
 import {useBoardStore} from "../stores/board.ts";
 import UsersMenu from "./UsersMenu.vue";
 import PostItComp from './PostIt.vue'
 import {type PostIt} from "@retro/shared";
+import OverlayFocus from "./OverlayFocus.vue";
 
 const boardStore = useBoardStore();
 
@@ -31,6 +31,10 @@ const createPostIt = (event: MouseEvent) => {
   });
 }
 
+const focusedUser = ref<string | null>(null)
+const focusUser = (userId : string | null) => {
+  focusedUser.value = userId;
+}
 </script>
 
 <style scoped>
