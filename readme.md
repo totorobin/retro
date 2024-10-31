@@ -1,15 +1,29 @@
-# RETRO
+# Retro
 
-application de rétro
+Webapp with a whiteboard shared for multiple users
 
-## developpement
+## Installation
 
-utiliser pnpm pour installer les dépendances
+### Prerequisites
+
+Install pnpm
+
 ```sh
+npm install -g pnpm
+```
+
+### Setup
+
+```sh
+# cd retro/
 pnpm install
 ```
 
-démarrer le server et le client d'une simple commande
-```shell
+## Run locally
+
+```sh
+# cd retro/
 pnpm dev
 ```
+
+Check the url given in the frontend's logs to use app with your browser
