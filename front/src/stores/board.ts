@@ -35,7 +35,7 @@ export const useBoardStore = defineStore("board", () => {
                 type: 'postIt',
                 text: '',
                 color: 'yellow',
-                visible: true
+                visible: false
             }
             socket.emit('addComponent', board.value.uuid, component, callback)
         }
@@ -53,6 +53,7 @@ export const useBoardStore = defineStore("board", () => {
             socket.emit('deleteComponent', board.value.uuid, id)
         }
     }
+
 
     return {
         board,
