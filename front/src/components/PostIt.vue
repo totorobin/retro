@@ -18,6 +18,10 @@
       >
         {{ hidetext }}
       </div>
+      <div v-if="own" @click="handleActionClick('toggleVisible')"  class="show-hide-btn">
+        <font-awesome-icon v-if="data.visible" :icon="faEye" style=""/>
+        <font-awesome-icon v-else :icon="faEyeSlash" style=""/>
+      </div>
     </OnClickOutside>
 
     <ContextMenu
@@ -41,6 +45,8 @@ import {type Position} from "@vueuse/core"
 import {useBoardStore} from "../stores/board.ts";
 import ContextMenu from "./ContextMenu.vue";
 import { useUserStore } from '../stores/users.ts';
+import {faEye, faEyeSlash} from "@fortawesome/free-solid-svg-icons";
+import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 
 const props = defineProps<{ data: PostIt, board: HTMLElement|null }>()
 
@@ -192,5 +198,11 @@ const handleActionClick = (action: string) => {
 
 .post-it.user-unfocused {
   filter: blur(2px) grayscale(50%)
+}
+
+.show-hide-btn {
+  padding: 5px;
+  margin-bottom: -25px;
+  cursor: pointer;
 }
 </style>
