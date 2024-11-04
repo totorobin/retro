@@ -8,6 +8,7 @@
                 :disabled="!own || editing"
                 @end="onDrop"
                 :capture="true"
+                :containerElement="board"
   >
     <OnClickOutside @trigger="onClickOutside">
       <div class="inpostit"
@@ -17,18 +18,18 @@
       >
         {{ hidetext }}
       </div>
-    </onClickOutside>
+    </OnClickOutside>
+
+    <ContextMenu
+        v-if="showMenu"
+        :actions="contextMenuActions"
+        :x="menuX"
+        :y="menuY"
+        @action-clicked="handleActionClick"
+    />
+      
   </UseDraggable>
 
-  <div v-if="showMenu" class="overlay" @click="closeContextMenu"/>
-  <ContextMenu
-      v-if="showMenu"
-      :actions="contextMenuActions"
-      :x="menuX"
-      :y="menuY"
-      style="z-index: 50"
-      @action-clicked="handleActionClick"
-  />
 
 </template>
 
@@ -41,7 +42,7 @@ import {useBoardStore} from "../stores/board.ts";
 import ContextMenu from "./ContextMenu.vue";
 import { useUserStore } from '../stores/users.ts';
 
-const props = defineProps<{ data: PostIt }>()
+const props = defineProps<{ data: PostIt, board: HTMLElement|null }>()
 
 const {updatePostIt, deletePostIt} = useBoardStore();
 const editing = ref(false)
@@ -84,9 +85,9 @@ const showMenu = ref(false);
 const menuX = ref(0);
 const menuY = ref(0);
 const contextMenuActions = computed(() =>[
-   {label: 'Delete', action: 'delete'},
-   {label: props.data.visible ? 'Hide' : 'Show', action: 'toggleVisible'},
-  {label: '', action: [
+  {label: 'Delete', style: '', action: 'delete'},
+  {label: props.data.visible ? 'Hide' : 'Show',  style: '', action: 'toggleVisible'},
+  {label: '', style: '', action: [
       { label: ' ', style: 'background-color: var(--green-post-it); width:10px; height:10px' , action: 'color-green' },
       { label: ' ', style: 'background-color: var(--yellow-post-it); width:10px; height:10px' , action: 'color-yellow' },
       { label: ' ', style: 'background-color: var(--orange-post-it); width:10px; height:10px' , action: 'color-orange' },
@@ -108,10 +109,6 @@ const showContextMenu = (event: PointerEvent) => {
     menuX.value = event.clientX;
     menuY.value = event.clientY;
   }
-};
-
-const closeContextMenu = () => {
-  showMenu.value = false;
 };
 
 const handleActionClick = (action: string) => {
@@ -142,8 +139,7 @@ const handleActionClick = (action: string) => {
 
 <style scoped>
 .post-it {
-  position: fixed;
-
+  position: absolute;
   padding: .33em; /* Margin between post-it border & text = 1/4 character width */
 
   /* Borders */
@@ -154,7 +150,7 @@ const handleActionClick = (action: string) => {
   box-shadow: 0 5px 10px -5px #000;
 }
 .post-it.own {
-  cursor: move;
+  cursor: grab;
 }
 .post-it.own:hover:not(.editing) {
   border: 1px solid black;
@@ -164,7 +160,6 @@ const handleActionClick = (action: string) => {
   border: 1px dashed var(--border-color);
   margin: -1px; /* compensate for border width */
 }
-
 .inpostit {
   width: 100px;
   min-height: 80px; /* Will elongate if too much text */
@@ -177,6 +172,9 @@ const handleActionClick = (action: string) => {
 .post-it.editing .inpostit[contenteditable] {
   outline: 0px solid transparent;
   cursor: text;
+}
+.post-it:active {
+  cursor: grabbing;
 }
 
 .green {
@@ -192,7 +190,7 @@ const handleActionClick = (action: string) => {
   background-color: var(--red-post-it);
 }
 
-.user-focused {
-  z-index: 1
+.post-it.user-unfocused {
+  filter: blur(2px) grayscale(50%)
 }
 </style>

@@ -35,7 +35,7 @@ const emitAction = (action: string) => {
 <style scoped>
 .context-menu {
   font-size: smaller;
-  position: absolute;
+  position: fixed;
   border: 1px solid var(--border-color);
   background: var(--background-color);
   box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
@@ -46,7 +46,7 @@ const emitAction = (action: string) => {
 
 .context-menu div {
   padding: 5px;
-  cursor: pointer;
+  cursor: default;
   display: inline-flex;
 }
 
@@ -62,6 +62,10 @@ const emitAction = (action: string) => {
 
 .context-menu div:hover {
   background-color: var(--background-color-dark);
+}
+
+.context-menu .action:hover {
+  cursor: pointer;
 }
 
 

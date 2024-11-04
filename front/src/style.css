@@ -3,6 +3,7 @@
 :root {
     --background-color: #f1f1f1;
     --background-color-dark: #eaeaea;
+    --outside-board-color: #808080;
     --border-width: 1px;
     --border-color: #000;
     --font-color: #333;
@@ -37,6 +38,7 @@
     :root {
         --background-color: #242424;
         --background-color-dark: #292929;
+        --outside-board-color: #000000;
         --border-width: 1px;
         --border-color: #fff;
         --font-color: #fff;
@@ -62,7 +64,7 @@ body {
     bottom: 50px;
     width: 150px;
     margin-left: -150px;
-    z-index: 20;
+    z-index: 2;
 }
 
 .panel-right-top {
@@ -71,7 +73,7 @@ body {
     top: 50px;
     width: 50px;
     margin-left: -50px;
-    z-index: 20;
+    z-index: 2;
 }
 
 .panel-top-right {
@@ -80,7 +82,10 @@ body {
     right: 0;
     height: 40px;
     margin-bottom: -40px;
-    z-index: 20;
+    border-radius: 0 0 0 5px;
+    border-bottom: var(--border-width) solid var(--border-color);
+    border-left: var(--border-width) solid var(--border-color);
+    z-index: 2;
 }
 
 

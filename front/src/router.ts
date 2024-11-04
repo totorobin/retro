@@ -12,7 +12,7 @@ const routes = [
         path: "/r/:boardId",
         component: RoomView,
         props: true,
-        beforeEnter: (to, from) => {
+        beforeEnter: (to:any, from:any) => {
             console.log("beforeEnter",to,from);
             if(!to.params.boardId){
                 console.log("no boardId");
