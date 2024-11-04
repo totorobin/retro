@@ -1,12 +1,7 @@
 import {Errors} from "../utils";
-import {BoardComponent} from "@retro/shared";
+import {SavedBoard} from "@retro/shared";
 
 
-export interface SavedBoard {
-    uuid: string,
-    users: string[],
-    components: BoardComponent[],
-}
 
 export class BoardRepository {
     private readonly board: Map<string, SavedBoard> = new Map(); 

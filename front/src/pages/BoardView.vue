@@ -1,16 +1,21 @@
 <template>
+  <board-menu/>
   <CurrentBoard/>
 </template>
 
 <script lang="ts" setup>
 import CurrentBoard from "../components/CurrentBoard.vue";
 import {useBoardStore} from "../stores/board.ts";
+import BoardMenu from "../components/BoardMenu.vue";
+import {onBeforeRouteLeave} from "vue-router";
 
-const props = defineProps<{ boardId: string }>();
+defineProps<{ boardId: string }>();
 
-const boardStore = useBoardStore();
 
-if (!boardStore.board) {
-  boardStore.joinBoard(props.boardId)
-}
+onBeforeRouteLeave((to, from, next) => {
+  console.log("beforeRouteLeave", to, from);
+  const boardStore = useBoardStore();
+  boardStore.leaveBoard()
+  next()
+})
 </script>

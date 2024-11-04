@@ -1,12 +1,11 @@
 import {defineStore} from "pinia";
 import {socket} from "../socket.ts";
-import {Board, User} from "@retro/shared";
+import {Board, SavedBoard, User} from "@retro/shared";
 import {ref} from "vue";
 
 export const useUserStore = defineStore("users", () => {
     const users = ref<Array<User>>([]);
     const me = ref<User>();
-    const myBoards = ref<Board[]>([]);
 
     const bindEvents = () => {
         socket.on("logged", (_me: User) => {
@@ -16,11 +15,16 @@ export const useUserStore = defineStore("users", () => {
             console.log(`connected users`, _players);
             users.value = _players;
         });
-        socket.on("boards", (_boards: Board[]) => {
-            console.log('boards', _boards);
-            myBoards.value = _boards;
-        })
     };
+
+    const myBoards = () => {
+        console.log("asked for Boards");
+        return new Promise((resolve) => socket.emit("myBoards", (myBoards : Array<SavedBoard>) =>  {
+           console.log("myBoards", myBoards);
+            resolve(myBoards);
+        }));
+    }
+
     return {
         bindEvents,
         users,

@@ -10,7 +10,8 @@
     --yellow-post-it: #f8f398;
     --green-post-it: #cbf078;
     --orange-post-it: #f1b963; 
-    --red-post-it: #e46161; 
+    --red-post-it: #e46161;
+    --primary-color: #d3531a
 }
 
 
@@ -85,4 +86,26 @@ body {
     border-bottom: var(--border-width) solid var(--border-color);
     border-left: var(--border-width) solid var(--border-color);
     z-index: 2;
+}
+
+
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    z-index: 9;
+}
+
+.overlay::before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+
+.overlay:hover {
+    cursor: pointer;
 }

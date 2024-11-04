@@ -28,6 +28,15 @@ export const useBoardStore = defineStore("board", () => {
         socket.emit("joinBoard", boardId);
     };
 
+    const leaveBoard = () => {
+        console.log("leave board", board.value?.uuid);
+        if (board.value?.uuid) {
+            socket.emit("leaveBoard", board.value?.uuid);
+            board.value = null;
+        }
+
+    }
+
     const createPostIt = (pos: number[], callback: (componentId: string) => void) => {
         if (board.value) {
             const component: PostIt = {
@@ -60,6 +69,7 @@ export const useBoardStore = defineStore("board", () => {
         bindEvents,
         createBoard,
         joinBoard,
+        leaveBoard,
         createPostIt,
         updatePostIt,
         deletePostIt
