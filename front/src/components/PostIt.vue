@@ -1,6 +1,6 @@
 <template>
   <UseDraggable class="post-it"
-                :class="[data.color, $attrs.class, {own, editing}]"
+                :class="[data.color, $attrs.class, {own, editing, 'redacted-script-regular': !data.visible && !own}]"
                 :initial-value="{ x: data.position[0], y: data.position[1] }"
                 @drag="onDrag"
                 @contextmenu.prevent="showContextMenu($event)"
@@ -15,7 +15,7 @@
                   @click="onClick"
                   @blur="onTextChange"
       >
-        {{ data.text }}
+        {{ hidetext }}
       </div>
     </OnClickOutside>
 
@@ -33,9 +33,9 @@
 </template>
 
 <script lang="ts" setup>
-import {UseDraggable, OnClickOutside} from '@vueuse/components'
+import {OnClickOutside, UseDraggable} from '@vueuse/components'
 import {PostIt} from "@retro/shared";
-import {ref} from "vue";
+import {ref, computed} from "vue";
 import {type Position} from "@vueuse/core"
 import {useBoardStore} from "../stores/board.ts";
 import ContextMenu from "./ContextMenu.vue";
@@ -84,25 +84,29 @@ const onClickOutside = () => {
 const showMenu = ref(false);
 const menuX = ref(0);
 const menuY = ref(0);
-const contextMenuActions = [
-  {label: '🗑️ Delete', action: 'delete'},
-  {label: '', action: [
+const contextMenuActions = computed(() =>[
+  {label: 'Delete', style: '', action: 'delete'},
+  {label: props.data.visible ? 'Hide' : 'Show',  style: '', action: 'toggleVisible'},
+  {label: '', style: '', action: [
       { label: ' ', style: 'background-color: var(--green-post-it); width:10px; height:10px' , action: 'color-green' },
       { label: ' ', style: 'background-color: var(--yellow-post-it); width:10px; height:10px' , action: 'color-yellow' },
       { label: ' ', style: 'background-color: var(--orange-post-it); width:10px; height:10px' , action: 'color-orange' },
       { label: ' ', style: 'background-color: var(--red-post-it); width:10px; height:10px' , action: 'color-red' }
     ]},
-];
+]);
+
+const rot13 = (text: string) => text.split('')
+    .map(char => char === ' ' ? ' ' : String.fromCharCode(char.charCodeAt(0) + (char.toLowerCase() < 'n' ? 13 : -13)))
+    .join('');
+
+const hidetext = computed(() =>  (!props.data.visible && !own.value) ? rot13(props.data.text) : props.data.text);
+
 
 const showContextMenu = (event: PointerEvent) => {
   event.preventDefault();
   showMenu.value = true;
   menuX.value = event.clientX;
   menuY.value = event.clientY;
-};
-
-const closeContextMenu = () => {
-  showMenu.value = false;
 };
 
 const handleActionClick = (action: string) => {
@@ -117,6 +121,12 @@ const handleActionClick = (action: string) => {
     case 'color-red':
       props.data.color = action.split('-')[1]
       updatePostIt(props.data)
+      break;
+    case 'toggleVisible':
+      if(props.data.id) {
+        props.data.visible = !props.data.visible;
+        updatePostIt(props.data)
+      }
       break;
     default:
       break;
