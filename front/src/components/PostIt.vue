@@ -190,7 +190,7 @@ const handleActionClick = (action: string) => {
   background-color: var(--red-post-it);
 }
 
-.user-focused {
-  z-index: 1
+.post-it.user-unfocused {
+  filter: blur(2px) grayscale(50%)
 }
 </style>

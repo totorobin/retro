@@ -1,20 +1,17 @@
 <template>
   <div v-if="board">
-    <UsersMenu :users="board.users" class="panel-right-top"></UsersMenu>
-    
     <div class="board-header">
-      Vous êtes connectés au board {{ board.uuid }}
       <button @click="centerView">Recentrer la vue</button>
+      <button class="close-overlay-btn" v-if="focusedUser" @click="focusUser(null)">Arrêter le focus</button>
     </div>
 
-    <div class="board-container" @dblclick.stop="createPostIt">
-      <div class="moving-board" ref="draggable" :style="movableView.style.value">
+    <div class="board-container">
+      <div class="moving-board" ref="draggable" :style="movableView.style.value" @dblclick.self.stop="createPostIt">
         <template v-for="postIt in postIts" :key="postIt.id">
-          <PostItComp :data="postIt" :board="draggable" :class="{ 'user-focused' : postIt.owner == focusedUser}"></PostItComp>
+          <PostItComp :data="postIt" :board="draggable" :class="{ 'user-unfocused' : focusedUser && postIt.owner !== focusedUser}"></PostItComp>
         </template>
       </div>
     </div>
-    <OverlayFocus v-if="focusedUser" closing-text="Supprimer le focus" @close="focusUser(null)"></OverlayFocus>
     <UsersMenu :users="board.users" class="panel-right-top" @focusUser="focusUser"></UsersMenu>
   </div>
 </template>
@@ -26,7 +23,6 @@ import UsersMenu from "./UsersMenu.vue";
 import PostItComp from './PostIt.vue'
 import {type PostIt} from "@retro/shared";
 import { useDraggable } from "@vueuse/core";
-import OverlayFocus from "./OverlayFocus.vue";
 
 const boardStore = useBoardStore();
 const board = computed(() => boardStore.board);
