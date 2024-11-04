@@ -2,11 +2,20 @@ import {v4 as uuid} from "uuid";
 import {Components} from "../app";
 import {Server, Socket} from "socket.io";
 import {EventEmitter} from 'events'
-import {SavedBoard} from "./board.repository";
-import {BoardComponent} from "@retro/shared";
+import {SavedBoard, BoardComponent} from "@retro/shared";
 
 export default function ({userRepo, boardRepo}: Components, emitter: EventEmitter) {
     return {
+        myBoards: (io: Server, socket: Socket) => async function (callback: (myBoards : Array<SavedBoard>) => void) {
+            try {
+               let boards = await boardRepo.findAllByUser(socket.data.userId);
+                callback(boards);
+                console.log("myBoards sent", boards);
+            } catch (e) {
+                console.error(e);
+                return
+            }
+        },
         newBoard: (io: Server, socket: Socket) =>
             async function (
                 boardId: string | null,
@@ -37,7 +46,7 @@ export default function ({userRepo, boardRepo}: Components, emitter: EventEmitte
                 try {
                     board = await boardRepo.findById(boardId);
                 } catch (e) {
-                    console.error(e);
+                    console.error('error joining board', e);
                     socket.emit("kickOut")
                     return
                 }
@@ -48,12 +57,15 @@ export default function ({userRepo, boardRepo}: Components, emitter: EventEmitte
                     await boardRepo.save(board);
                 }
 
+                console.log(`user ${socket.data.userId} joined board ${boardId}`);
                 // socket est lié à la board
                 socket.join(`board-${boardId}`);
 
-                // toutes les sockets liés à la board sont mise a jour avec le nouvel état
-                emitter.emit('broadcastBoards', [boardId])
             },
+        leaveBoard: (io: Server, socket: Socket) => async function (boardId: string) {
+            console.log(`user ${socket.data.userId} leaving board ${boardId}`);
+            socket.leave(`board-${boardId}`);
+        },
         addComponent: (io: Server, socket: Socket) =>
             async function (boardId: string, component: BoardComponent, callback: (componentId: string) => void) {
                 component.id = uuid();

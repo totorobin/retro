@@ -25,21 +25,28 @@ export interface Board {
     components: Array<BoardComponent>
 }
 
+export interface SavedBoard {
+    uuid: string,
+    users: string[],
+    components: BoardComponent[],
+}
+
 export interface ServerToClientEvents {
     logged: (me: User) => void;
     players: (players: Array<User>) => void;
     board: (board: Board) => void;
-    boards: (boards: Array<Board>) => void;
     kickOut: () => void;
 }
 
 export interface ClientToServerEvents {
     login: (me: Partial<User>) => void;
+    myBoards: (callback: (myBoards : Array<SavedBoard>) => void) => void;
     newBoard: (
         boardId: string | null,
         callback: (boardId: string) => void
     ) => void;
     joinBoard: (boardId: string) => void
+    leaveBoard: (boardId: string) => void
     addComponent: (boardId: string, component: BoardComponent, callback: (componentId: string) => void) => void
     updateComponent: (boardId: string, component: BoardComponent) => void
     deleteComponent: (boardId: string, componentId: string) => void
