@@ -34,7 +34,12 @@ export default function (io: Server, {userRepo, boardRepo}: Components) {
                     components: savedBoard.components,
                 }
                 for (const uuid of savedBoard.users) {
-                    board.users.push(await userRepo.findById(uuid))
+                    try {
+                        board.users.push(await userRepo.findById(uuid))
+                    } catch (e) {
+                        console.log('user %s not found', uuid)
+                    }
+
                 }
 
                 console.log("broadcast board : ", boardId);
