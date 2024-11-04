@@ -6,7 +6,7 @@ import {useRouter} from "vue-router";
 
 export const useBoardStore = defineStore("board", () => {
     const router = useRouter();
-    const board = ref<Board>();
+    const board = ref<Board|null>();
 
     const bindEvents = () => {
         socket.on("board", (_board: Board) => {
