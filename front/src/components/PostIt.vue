@@ -1,6 +1,7 @@
 <template>
   <UseDraggable class="post-it"
                 :class="[data.color, $attrs.class, {own, editing, 'redacted-script-regular': !data.visible && !own}]"
+                :style="[ own ? '' : { left: data.position[0] + 'px', top: data.position[1] + 'px', transition: 'all 0.2s ease'}]"
                 :initial-value="{ x: data.position[0], y: data.position[1] }"
                 @drag="onDrag"
                 @contextmenu.prevent="showContextMenu($event)"
@@ -47,7 +48,6 @@ const editing = ref(false)
 const dragging = ref(false)
 const userStore = useUserStore()
 const own = ref(userStore.me?.uuid === props.data.owner)
-
 
 const onDrag = () => {
   dragging.value = true
@@ -102,10 +102,12 @@ const hidetext = computed(() =>  (!props.data.visible && !own.value) ? rot13(pro
 
 
 const showContextMenu = (event: PointerEvent) => {
-  event.preventDefault();
-  showMenu.value = true;
-  menuX.value = event.clientX;
-  menuY.value = event.clientY;
+  if(own.value) {
+    event.preventDefault();
+    showMenu.value = true;
+    menuX.value = event.clientX;
+    menuY.value = event.clientY;
+  }
 };
 
 const closeContextMenu = () => {
