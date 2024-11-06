@@ -50,6 +50,18 @@ export const useBoardStore = defineStore("board", () => {
         }
     }
 
+    const createArea = (pos: number[], callback: (componentId: string) => void) => {
+        if(board.value) {
+            const component: Area = {
+                position: pos,
+                type: 'area',
+                color: 'yellow',
+                title: ''
+            }
+            socket.emit('addComponent', board.value.uuid, component, callback)
+        }
+    }
+
     const updatePostIt = (component: PostIt) => {
         if (board.value) {
             socket.emit('updateComponent', board.value.uuid, component)
@@ -72,6 +84,7 @@ export const useBoardStore = defineStore("board", () => {
         leaveBoard,
         createPostIt,
         updatePostIt,
-        deletePostIt
+        deletePostIt,
+        createArea
     };
 });

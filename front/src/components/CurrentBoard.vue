@@ -3,10 +3,14 @@
     <div class="board-header">
       <button @click="centerView">Recentrer la vue</button>
       <button class="close-overlay-btn" v-if="focusedUser" @click="focusUser(null)">Arrêter le focus</button>
+      <button v-if="allowedToCreateArea" @click="createArea()">Ajouter une zone</button>
     </div>
 
     <div class="board-container">
       <div class="moving-board" ref="draggable" :style="movableView.style.value" @dblclick.self.stop="createPostIt">
+        <template v-for="area in areas" :key="area.id">
+          <AreaComp :data="area" :board="draggable" />
+        </template>
         <template v-for="postIt in postIts" :key="postIt.id">
           <PostItComp :data="postIt" :board="draggable" :class="{ 'user-unfocused' : focusedUser && postIt.owner !== focusedUser}"></PostItComp>
         </template>
@@ -21,7 +25,8 @@ import {computed, ref} from "vue";
 import {useBoardStore} from "../stores/board.ts";
 import UsersMenu from "./UsersMenu.vue";
 import PostItComp from './PostIt.vue'
-import {type PostIt} from "@retro/shared";
+import AreaComp from './PostItArea.vue'
+import {type Area, type PostIt} from "@retro/shared";
 import { useDraggable } from "@vueuse/core";
 
 const boardStore = useBoardStore();
@@ -30,8 +35,8 @@ const board = computed(() => boardStore.board);
 
 // Move view
 const BOARD_SIZE = [10000, 10000] // May be variabilized & sent by the server
-const board_size_x = BOARD_SIZE[0] + 'px'
-const board_size_y = BOARD_SIZE[1] + 'px'
+const board_size_x = BOARD_SIZE[0] + 'px' // used in CSS below
+const board_size_y = BOARD_SIZE[1] + 'px' // used in CSS below
 const draggable = ref<HTMLElement | null>(null)
 const movableView = useDraggable(draggable, {
   initialValue: {x:-BOARD_SIZE[0]/2, y:-BOARD_SIZE[1]/2},
@@ -52,9 +57,27 @@ const createPostIt = (event: MouseEvent) => {
   });
 }
 
+// Areas
+const areas = computed(() => board.value?.components?.filter(c => c.type === 'area').map(c => c as unknown as Area) || [])
+
 const focusedUser = ref<string | null>(null)
 const focusUser = (userId : string | null) => {
   focusedUser.value = userId;
+}
+
+const allowedToCreateArea = ref<boolean>(true)
+const DEFAULT_AREA_SIZE = [160,100, 340,200]
+const createArea = () => {
+  const pos = [
+    BOARD_SIZE[0] + movableView.x.value + DEFAULT_AREA_SIZE[0],
+    BOARD_SIZE[1] + movableView.y.value + DEFAULT_AREA_SIZE[1],
+    BOARD_SIZE[0] + movableView.x.value + DEFAULT_AREA_SIZE[2],
+    BOARD_SIZE[1] + movableView.y.value + DEFAULT_AREA_SIZE[3],
+  ]
+  boardStore.createArea(pos, (areaid: string) => {
+    // Area has been created, simulate a click on it to open edition
+    console.log('New Area', areaid, pos)
+  })
 }
 </script>
 

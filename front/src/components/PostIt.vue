@@ -154,6 +154,7 @@ const handleActionClick = (action: string) => {
 
   /* Shadow */
   box-shadow: 0 5px 10px -5px #000;
+
 }
 .post-it.own {
   cursor: grab;
