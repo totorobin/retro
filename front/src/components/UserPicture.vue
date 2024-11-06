@@ -10,7 +10,7 @@ const loadingFailed = ref(false);
 
 <template>
   <img v-if="!loadingFailed" :alt="model.name" :src="model.picture" :title="model.name" @error="() => loadingFailed = true">
-  <div v-else class="initials" :style="{'background-color': `#${parseInt(model.uuid).toString(16).substring(0,3)}` }">{{ model.name.split(' ').map(w => w[0].toUpperCase()).join('') }}</div>
+  <div v-else class="initials" :style="{'background-color': `hsl(${parseInt(model.uuid) % 360}, 50%, 50%)` }">{{ model.name.split(' ').map(w => w[0].toUpperCase()).join('') }}</div>
 </template>
 
 <style scoped>
@@ -20,6 +20,6 @@ img, .initials {
   border-radius: 50%;
   line-height: 30px;
   font-size: 15px;
-  font-family: "Redacted Script", cursive;
+  font-family: cursive;
 }
 </style>
