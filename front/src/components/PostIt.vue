@@ -1,26 +1,24 @@
 <template>
-  <UseDraggable class="post-it"
-                :class="[data.color, $attrs.class, {own, editing, 'redacted-script-regular': !data.visible && !own}]"
-                :style="[ own ? '' : { left: data.position[0] - 50 + 'px', top: data.position[1] - 40 + 'px', transition: 'all 0.2s ease'}]"
-                :initial-value="{ x: data.position[0] - 50, y: data.position[1] - 40 }"
-                @drag="onDrag"
-                @contextmenu.prevent="showContextMenu($event)"
-                :disabled="!own || editing"
-                @end="onDrop"
-                :capture="true"
-                :containerElement="board"
-  >
     <OnClickOutside @trigger="onClickOutside">
-      <div class="inpostit"
-                  :contenteditable="own && editing"
-                  @click="onClick"
-                  @blur="onTextChange"
+      <div
+          @mouseover="setDraggable"
+          class="post-it"
+          :class="[data.color, $attrs.class, {own, editing, 'redacted-script-regular': !data.visible && !own}]"
+          :style="{ left: data.position[0] - 50 + 'px', top: data.position[1] - 40 + 'px', transition: own ? '' : 'all 0.2s ease'}"
+          @contextmenu.prevent="showContextMenu($event)"
+
       >
-        {{ hidetext }}
-      </div>
-      <div v-if="own" @click="handleActionClick('toggleVisible')"  class="show-hide-btn">
-        <font-awesome-icon v-if="data.visible" :icon="faEye" style=""/>
-        <font-awesome-icon v-else :icon="faEyeSlash" style=""/>
+        <div class="inpostit"
+                    :contenteditable="own && editing"
+                    @click="onClick"
+                    @blur="onTextChange"
+        >
+          {{ hidetext }}
+        </div>
+        <div v-if="own" @click="handleActionClick('toggleVisible')"  class="show-hide-btn">
+          <font-awesome-icon v-if="data.visible" :icon="faEye" style=""/>
+          <font-awesome-icon v-else :icon="faEyeSlash" style=""/>
+        </div>
       </div>
     </OnClickOutside>
 
@@ -31,17 +29,16 @@
         :y="menuY"
         @action-clicked="handleActionClick"
     />
-      
-  </UseDraggable>
+
 
 
 </template>
 
 <script lang="ts" setup>
-import {OnClickOutside, UseDraggable} from '@vueuse/components'
+import {OnClickOutside} from '@vueuse/components'
 import {PostIt} from "@retro/shared";
 import {ref, computed} from "vue";
-import {type Position} from "@vueuse/core"
+import {type Position, useDraggable} from "@vueuse/core"
 import {useBoardStore} from "../stores/board.ts";
 import ContextMenu from "./ContextMenu.vue";
 import { useUserStore } from '../stores/users.ts';
@@ -50,22 +47,38 @@ import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 
 const props = defineProps<{ data: PostIt, board: HTMLElement|null }>()
 
-const {updatePostIt, deletePostIt} = useBoardStore();
+const {updateComponent, deleteComponent} = useBoardStore();
 const editing = ref(false)
 const dragging = ref(false)
 const userStore = useUserStore()
 const own = ref(userStore.me?.uuid === props.data.owner)
 
-const onDrag = () => {
-  dragging.value = true
-  editing.value = false
-}
-const onDrop = (position: Position, _event: PointerEvent) => {
-  if (props.data.position[0] !== position.x && props.data.position[1] !== position.y) {
-    props.data.position = [position.x + 50, position.y + 40]
-    updatePostIt(props.data)
+
+const setDraggable = (evt : MouseEvent & { target : HTMLElement}) => {
+  if(own.value &&  evt.target) {
+    const moved = ref(false)
+    useDraggable(evt.target, {
+      onEnd: (position: Position, _evt: PointerEvent) => {
+        if (moved.value) {
+          updateComponent(props.data)
+        }
+        setTimeout(() => {dragging.value = false}, 100) // Delay to prevent onClick to trigger
+      },
+      onStart: () => {
+        dragging.value = true
+        editing.value = false
+      },
+      onMove :(event) => {
+        moved.value = true
+        props.data.position = [event.x + 50, event.y + 40]
+      },
+      preventDefault: true,
+      capture: true,
+      exact: true,
+      stopPropagation: true,
+      containerElement : props.board,
+    })
   }
-  setTimeout(() => {dragging.value = false}, 100) // Delay to prevent onClick to trigger
 }
 
 
@@ -78,7 +91,7 @@ const onTextChange = (evt: FocusEvent & { target: { innerText: string } }) => {
   if (props.data.text !== evt.target.innerText) {
     console.log("endEdit: " + props.data.text + " <- " + evt.target.innerText)
     props.data.text = evt.target.innerText
-    updatePostIt({...props.data})
+    updateComponent({...props.data})
     evt.target.innerText = props.data.text // Fix duplicating text on edit
   }
   editing.value = false
@@ -121,14 +134,14 @@ const handleActionClick = (action: string) => {
   switch (action) {
     case 'delete':
       if (props.data.id)
-        deletePostIt(props.data.id)
+        deleteComponent(props.data.id)
       break;
     case 'color-green':
     case 'color-yellow':
     case 'color-orange':
     case 'color-red':
       props.data.color = action.split('-')[1]
-      updatePostIt(props.data)
+      updateComponent(props.data)
       break;
     case 'toggleVisible':
       if(props.data.id) {

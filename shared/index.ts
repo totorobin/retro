@@ -20,8 +20,9 @@ export interface PostIt extends BoardComponent {
 }
 
 export interface Area extends BoardComponent {
-    color?: string;
-    title?: string;
+    color: string;
+    title: string;
+    visible: boolean | null;
 }
 
 export interface Board {

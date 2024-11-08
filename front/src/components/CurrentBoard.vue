@@ -41,8 +41,10 @@ const board_size_y = BOARD_SIZE[1] + 'px' // used in CSS below
 const draggable = ref<HTMLElement | null>(null)
 const movableView = useDraggable(draggable, {
   initialValue: {x:-BOARD_SIZE[0]/2, y:-BOARD_SIZE[1]/2},
-  exact: true,
-  capture: true,
+  capture: false,
+  preventDefault: false,
+  exact: false,
+  stopPropagation: false,
 })
 const centerView = () => {
   movableView.x.value = -BOARD_SIZE[0]/2

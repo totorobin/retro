@@ -1,19 +1,22 @@
 <template>
   <OnClickOutside :options="{ ignore: [/* ... */] }" @trigger="editable = false">
-  <div id="area-top" :class="[$attrs.class, { editable }]"
-       class="border"
-       @mouseover="setDraggable"
+  <div class="border"
        @click="editable=own"
        :style="{
           left: data.position[0] + 'px',
           top: data.position[1] + 'px',
           width: (data.position[2]-data.position[0]) + 'px',
        }">
-    <div class="color-selected" :class="[data.color]" @click="switchColor" ></div>
-    <font-awesome-icon v-if="editable" :icon="faTrash" style="" @click="removeArea"/>
-    <div class="title" :contenteditable="own && editable"
-         style="min-width: 30px; min-height: 15px; padding-left: 5px;"
-         @blur="onTextTitle">{{ data.title  }}</div>
+    <div id="area-top" :class="[$attrs.class, { editable }]"
+         @mouseover="setDraggable"
+    ></div>
+    <div id="header-area">
+      <div class="color-selected" :class="[data.color]" @click="switchColor" ></div>
+      <font-awesome-icon v-if="editable" :icon="faTrash" style="" @click="removeArea"/>
+      <div class="title" :contenteditable="own && editable"
+           style="min-width: 30px; min-height: 15px; padding-left: 5px;"
+           @blur="onTextTitle">{{ data.title  }}</div>
+    </div>
   </div>
   <div id="area-left" :class="[$attrs.class, { editable }]"
        class="border"
@@ -125,8 +128,8 @@ const switchColor = () => {
   updateComponent(props.data)
 }
 
-const setDraggable = (evt) => {
-  if(editable.value) {
+const setDraggable = (evt : MouseEvent & { target : HTMLElement}) => {
+  if(editable.value &&  evt.target) {
     const border = evt.target.id
     useDraggable(evt.target, {
       onEnd: (_pos: Position, _evt: PointerEvent) => {
@@ -144,6 +147,11 @@ const setDraggable = (evt) => {
           case 'area-bottom-right':  props.data.position[3] = event.y; props.data.position[2] = event.x; break;
         }
       },
+      preventDefault: true,
+      capture: true,
+      exact: true,
+      stopPropagation: true,
+      disabled: () => !editable.value,
       containerElement : props.board
     })
   }
@@ -154,20 +162,27 @@ const setDraggable = (evt) => {
 <style scoped>
 
 #area-top {
-  position: absolute;
   border-top: 2px solid var(--border-color);
-  display:flex;
-  flex-direction: row;
   &.editable {
     border-top: 2px dashed var(--border-color);
     cursor: n-resize;
-    .title {
-      cursor: text;
-    }
+  }
+}
+#header-area {
+  display:flex;
+  flex-direction: row;
+  gap: 5px;
+  padding: 10px;
+  line-height: 15px;
+  width: 100%;
+  &.editable {
+    cursor: grab;
+  }
+  .title {
+    cursor: text;
   }
 }
 #area-left {
-  position: absolute;
   border-left: 2px solid var(--border-color);
   &.editable {
     border-left: 2px dashed var(--border-color);
@@ -175,7 +190,6 @@ const setDraggable = (evt) => {
   }
 }
 #area-right {
-  position: absolute;
   border-right: 2px solid var(--border-color);
   &.editable {
     border-right: 2px dashed var(--border-color);
@@ -183,7 +197,6 @@ const setDraggable = (evt) => {
   }
 }
 #area-bottom {
-  position: absolute;
   border-bottom: 2px solid var(--border-color);
   &.editable {
     border-bottom: 2px dashed var(--border-color);
@@ -214,7 +227,6 @@ const setDraggable = (evt) => {
   position: absolute;
 }
 .color-selected {
-  margin: 10px;
   height: 15px;
   width: 15px;
   border-radius: 15px;
