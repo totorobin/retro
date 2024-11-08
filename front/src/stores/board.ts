@@ -1,5 +1,5 @@
 import {defineStore} from "pinia";
-import {Board, PostIt} from "@retro/shared";
+import {Area, Board, BoardComponent, PostIt} from "@retro/shared";
 import {ref} from "vue";
 import {socket} from "../socket.ts";
 import {useRouter} from "vue-router";
@@ -62,13 +62,13 @@ export const useBoardStore = defineStore("board", () => {
         }
     }
 
-    const updatePostIt = (component: PostIt) => {
+    const updateComponent = (component: BoardComponent) => {
         if (board.value) {
             socket.emit('updateComponent', board.value.uuid, component)
         }
     }
 
-    const deletePostIt = (id: string) => {
+    const deleteComponent = (id: string) => {
         if (board.value) {
             console.log('delete component ', id)
             socket.emit('deleteComponent', board.value.uuid, id)
@@ -83,8 +83,8 @@ export const useBoardStore = defineStore("board", () => {
         joinBoard,
         leaveBoard,
         createPostIt,
-        updatePostIt,
-        deletePostIt,
+        updateComponent,
+        deleteComponent,
         createArea
     };
 });

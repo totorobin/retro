@@ -9,7 +9,7 @@
     <div class="board-container">
       <div class="moving-board" ref="draggable" :style="movableView.style.value" @dblclick.self.stop="createPostIt">
         <template v-for="area in areas" :key="area.id">
-          <AreaComp :data="area" :board="draggable" />
+          <AreaComp :data="area" :board="draggable"  :class="{ 'user-unfocused' : focusedUser }" />
         </template>
         <template v-for="postIt in postIts" :key="postIt.id">
           <PostItComp :data="postIt" :board="draggable" :class="{ 'user-unfocused' : focusedUser && postIt.owner !== focusedUser}"></PostItComp>
@@ -28,7 +28,8 @@ import PostItComp from './PostIt.vue'
 import AreaComp from './PostItArea.vue'
 import {type Area, type PostIt} from "@retro/shared";
 import { useDraggable } from "@vueuse/core";
-
+import {useUserStore} from "../stores/users.ts";
+const userStore = useUserStore()
 const boardStore = useBoardStore();
 const board = computed(() => boardStore.board);
 
@@ -51,7 +52,7 @@ const centerView = () => {
 // Post-its
 const postIts = computed(() => board.value?.components?.filter((c) => c.type === "postIt").map(c => c as unknown as PostIt) || []);
 const createPostIt = (event: MouseEvent) => {
-  const pos: number[] = [(event.pageX - movableView.x.value - 20), (event.pageY - movableView.y.value - 15)];
+  const pos: number[] = [(event.pageX - movableView.x.value), (event.pageY - movableView.y.value)];
   boardStore.createPostIt(pos, (id: string) => {
     console.log("création du post-it", id);
   });
@@ -65,7 +66,7 @@ const focusUser = (userId : string | null) => {
   focusedUser.value = userId;
 }
 
-const allowedToCreateArea = ref<boolean>(true)
+const allowedToCreateArea = computed<boolean>(() =>userStore.me?.uuid === board.value?.ownerId)
 const DEFAULT_AREA_SIZE = [160,100, 340,200]
 const createArea = () => {
   const pos = [

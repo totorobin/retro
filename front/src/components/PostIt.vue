@@ -1,8 +1,8 @@
 <template>
   <UseDraggable class="post-it"
                 :class="[data.color, $attrs.class, {own, editing, 'redacted-script-regular': !data.visible && !own}]"
-                :style="[ own ? '' : { left: data.position[0] + 'px', top: data.position[1] + 'px', transition: 'all 0.2s ease'}]"
-                :initial-value="{ x: data.position[0], y: data.position[1] }"
+                :style="[ own ? '' : { left: data.position[0] - 50 + 'px', top: data.position[1] - 40 + 'px', transition: 'all 0.2s ease'}]"
+                :initial-value="{ x: data.position[0] - 50, y: data.position[1] - 40 }"
                 @drag="onDrag"
                 @contextmenu.prevent="showContextMenu($event)"
                 :disabled="!own || editing"
@@ -62,7 +62,7 @@ const onDrag = () => {
 }
 const onDrop = (position: Position, _event: PointerEvent) => {
   if (props.data.position[0] !== position.x && props.data.position[1] !== position.y) {
-    props.data.position = [position.x, position.y]
+    props.data.position = [position.x + 50, position.y + 40]
     updatePostIt(props.data)
   }
   setTimeout(() => {dragging.value = false}, 100) // Delay to prevent onClick to trigger
