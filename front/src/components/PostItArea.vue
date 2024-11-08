@@ -10,7 +10,7 @@
     <div id="area-top" :class="[$attrs.class, { editable }]"
          @mouseover="setDraggable"
     ></div>
-    <div id="header-area">
+    <div id="header-area" :class="[$attrs.class, { editable }]" @mouseover="setDraggable">
       <div class="color-selected" :class="[data.color]" @click="switchColor" ></div>
       <font-awesome-icon v-if="editable" :icon="faTrash" style="" @click="removeArea"/>
       <div class="title" :contenteditable="own && editable"
@@ -145,6 +145,11 @@ const setDraggable = (evt : MouseEvent & { target : HTMLElement}) => {
           case 'area-top-right':  props.data.position[1] = event.y; props.data.position[2] = event.x; break;
           case 'area-bottom-left':  props.data.position[3] = event.y; props.data.position[0] = event.x; break;
           case 'area-bottom-right':  props.data.position[3] = event.y; props.data.position[2] = event.x; break;
+          case 'header-area':
+            const width = props.data.position[2] - props.data.position[0]
+            const height = props.data.position[3] - props.data.position[1]
+            props.data.position = [ event.x, event.y, event.x + width, event.y + height ];
+            break;
         }
       },
       preventDefault: true,
