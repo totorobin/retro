@@ -69,13 +69,13 @@ const focusUser = (userId : string | null) => {
 }
 
 const allowedToCreateArea = computed<boolean>(() =>userStore.me?.uuid === board.value?.ownerId)
-const DEFAULT_AREA_SIZE = [160,100, 340,200]
+const DEFAULT_AREA_SIZE = [200,100]
 const createArea = () => {
   const pos = [
-    BOARD_SIZE[0] + movableView.x.value + DEFAULT_AREA_SIZE[0],
-    BOARD_SIZE[1] + movableView.y.value + DEFAULT_AREA_SIZE[1],
-    BOARD_SIZE[0] + movableView.x.value + DEFAULT_AREA_SIZE[2],
-    BOARD_SIZE[1] + movableView.y.value + DEFAULT_AREA_SIZE[3],
+    - movableView.x.value + window.innerWidth/2 - DEFAULT_AREA_SIZE[0]/2,
+    - movableView.y.value + window.innerHeight/2 - DEFAULT_AREA_SIZE[1]/2,
+   - movableView.x.value +  window.innerWidth/2 + DEFAULT_AREA_SIZE[0]/2,
+    - movableView.y.value + window.innerHeight/2 + DEFAULT_AREA_SIZE[1]/2,
   ]
   boardStore.createArea(pos, (areaid: string) => {
     // Area has been created, simulate a click on it to open edition
@@ -88,8 +88,9 @@ const createArea = () => {
 .board-header {
   position: absolute;
   top: 0;
-  width: 100vw;
+  width: 120px;
   user-select: none;
+  translate: calc(50vw - 60px);
 }
 .board-container {
   position: absolute;

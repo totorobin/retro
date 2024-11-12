@@ -146,7 +146,7 @@ const handleActionClick = (action: string) => {
     case 'toggleVisible':
       if(props.data.id) {
         props.data.visible = !props.data.visible;
-        updatePostIt(props.data)
+        updateComponent(props.data)
       }
       break;
     default:
