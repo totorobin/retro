@@ -6,12 +6,13 @@
           :class="[data.color, $attrs.class, {own, editing, 'redacted-script-regular': !data.visible && !own}]"
           :style="{ left: data.position[0] - 50 + 'px', top: data.position[1] - 40 + 'px', transition: own ? '' : 'all 0.2s ease'}"
           @contextmenu.prevent="showContextMenu($event)"
+          @click="onClick"
 
       >
         <div class="inpostit"
                     :contenteditable="own && editing"
-                    @click="onClick"
                     @blur="onTextChange"
+             :id="data.id"
         >
           {{ hidetext }}
         </div>
@@ -77,6 +78,7 @@ const setDraggable = (evt : MouseEvent & { target : HTMLElement}) => {
       exact: true,
       stopPropagation: true,
       containerElement : props.board,
+      disabled: () => editing.value
     })
   }
 }

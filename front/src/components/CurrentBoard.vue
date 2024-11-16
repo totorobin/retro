@@ -21,7 +21,7 @@
 </template>
 
 <script lang="ts" setup>
-import {computed, ref} from "vue";
+import {computed, nextTick, ref} from "vue";
 import {useBoardStore} from "../stores/board.ts";
 import UsersMenu from "./UsersMenu.vue";
 import PostItComp from './PostIt.vue'
@@ -51,12 +51,21 @@ const centerView = () => {
   movableView.y.value = -BOARD_SIZE[0]/2
 }
 
+const delay = ms => new Promise(res => setTimeout(res, ms));
+
 // Post-its
 const postIts = computed(() => board.value?.components?.filter((c) => c.type === "postIt").map(c => c as unknown as PostIt) || []);
 const createPostIt = (event: MouseEvent) => {
   const pos: number[] = [(event.pageX - movableView.x.value), (event.pageY - movableView.y.value)];
-  boardStore.createPostIt(pos, (id: string) => {
-    console.log("création du post-it", id);
+  boardStore.createPostIt(pos, async (id: string) =>  {
+
+      await delay(300)
+      console.log("création du post-it", id, document.getElementById(id));
+      document.getElementById(id)?.click();
+    document.getElementById(id)?.click();
+    await nextTick()
+    document.getElementById(id)?.focus();
+
   });
 }
 

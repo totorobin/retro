@@ -102,10 +102,10 @@ export default function ({userRepo, boardRepo}: Components, emitter: EventEmitte
                 board.components.push(component);
                 await boardRepo.save(board)
 
-                callback(component.id);
-
                 // toutes les sockets liés à la board sont mise a jour avec le nouvel état
                 emitter.emit('broadcastBoards', [boardId])
+
+                callback(component.id);
             },
         updateComponent: (io: Server, socket: Socket) =>
             async function (boardId: string, component: BoardComponent) {
