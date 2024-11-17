@@ -56,7 +56,9 @@ export const useBoardStore = defineStore("board", () => {
                 position: pos,
                 type: 'area',
                 color: 'yellow',
-                title: ''
+                title: '',
+                visible: true,
+                forceVisiblility: null
             }
             socket.emit('addComponent', board.value.uuid, component, callback)
         }

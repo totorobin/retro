@@ -12,16 +12,19 @@ const updatePostItColor = (board: SavedBoard, component: PostIt) => {
         .slice(-1)
 
     if(areas.length == 1) {
-        component.color = areas[0].color ?? component.color
+        component.color = areas[0].color
+        component.visible = areas[0].forceVisiblility ?? component.visible
     }
 }
 const updateAllPostIt = (board: SavedBoard, component: Area) => {
-    if(component.color)
+    if(component.color || component.forceVisiblility != null)
         board.components.filter(c=> c.type === 'postIt').map(c => c as PostIt)
             .filter(pi => component.position[0] < pi.position[0] && pi.position[0] < component.position[2])
             .filter(pi => component.position[1] < pi.position[1] && pi.position[1] < component.position[3])
-            .map(pi => pi.color = component.color ?? pi.color)
-
+            .map(pi => {
+                pi.color = component.color
+                pi.visible = component.forceVisiblility ?? pi.visible
+            })
 }
 export default function ({userRepo, boardRepo}: Components, emitter: EventEmitter) {
     return {
@@ -100,6 +103,9 @@ export default function ({userRepo, boardRepo}: Components, emitter: EventEmitte
                     return
                 }
                 board.components.push(component);
+                if(component.type === 'postIt') {
+                    updatePostItColor(board, component as PostIt)
+                }
                 await boardRepo.save(board)
 
                 // toutes les sockets liés à la board sont mise a jour avec le nouvel état

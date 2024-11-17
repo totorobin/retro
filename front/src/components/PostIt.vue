@@ -31,8 +31,6 @@
         @action-clicked="handleActionClick"
     />
 
-
-
 </template>
 
 <script lang="ts" setup>
@@ -47,6 +45,8 @@ import {faEye, faEyeSlash} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 
 const props = defineProps<{ data: PostIt, board: HTMLElement|null }>()
+defineOptions({ inheritAttrs: false })
+
 
 const {updateComponent, deleteComponent} = useBoardStore();
 const editing = ref(false)
@@ -91,7 +91,6 @@ const onClick = () => {
 }
 const onTextChange = (evt: FocusEvent & { target: { innerText: string } }) => {
   if (props.data.text !== evt.target.innerText) {
-    console.log("endEdit: " + props.data.text + " <- " + evt.target.innerText)
     props.data.text = evt.target.innerText
     updateComponent({...props.data})
     evt.target.innerText = props.data.text // Fix duplicating text on edit

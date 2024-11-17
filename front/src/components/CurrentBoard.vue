@@ -9,7 +9,7 @@
     <div class="board-container">
       <div class="moving-board" ref="draggable" :style="movableView.style.value" @dblclick.self.stop="createPostIt">
         <template v-for="area in areas" :key="area.id">
-          <AreaComp :data="area" :board="draggable"  :class="{ 'user-unfocused' : focusedUser }" />
+          <AreaComp v-if="area.visible || allowedToCreateArea" :data="area" :board="draggable" />
         </template>
         <template v-for="postIt in postIts" :key="postIt.id">
           <PostItComp :data="postIt" :board="draggable" :class="{ 'user-unfocused' : focusedUser && postIt.owner !== focusedUser}"></PostItComp>
@@ -77,7 +77,7 @@ const focusUser = (userId : string | null) => {
   focusedUser.value = userId;
 }
 
-const allowedToCreateArea = computed<boolean>(() =>userStore.me?.uuid === board.value?.ownerId)
+const allowedToCreateArea = computed<boolean>(() => userStore.me?.uuid === board.value?.ownerId)
 const DEFAULT_AREA_SIZE = [200,100]
 const createArea = () => {
   const pos = [

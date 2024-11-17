@@ -11,7 +11,9 @@
          @mouseover="setDraggable"
     ></div>
     <div id="header-area" :class="[$attrs.class, { editable }]" @mouseover="setDraggable">
-      <div class="color-selected" :class="[data.color]" @click="switchColor" ></div>
+      <div class="color-selected" :class="[data.color]" @click="switchColor" title="choose color" ></div>
+      <font-awesome-icon v-if="own" :icon="data.forceVisiblility ? faEye : faEyeSlash" :style="{ opacity : data.forceVisiblility == null ? '0.5' : '1'}" @click="toggleForceVisibility" title="toggle Post-it visibility"/>
+      <font-awesome-icon v-if="editable" :icon="data.visible ? farEye : farEyeSlash" style="" @click="showHideArea" title="toggle Area visibility"/>
       <font-awesome-icon v-if="editable" :icon="faTrash" style="" @click="removeArea"/>
       <div class="title" :contenteditable="own && editable"
            style="min-width: 30px; min-height: 15px; padding-left: 5px;"
@@ -98,7 +100,8 @@ import {ref} from "vue";
 import {OnClickOutside} from "@vueuse/components";
 import {useBoardStore} from "../stores/board.ts";
 import {useUserStore} from "../stores/users.ts";
-import {faTrash} from "@fortawesome/free-solid-svg-icons";
+import { faTrash , faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
+import { faEye as farEye, faEyeSlash as farEyeSlash } from "@fortawesome/free-regular-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 
 
@@ -125,6 +128,15 @@ const removeArea = () => {
 const COLORS = ['yellow', 'red', 'green', 'orange']
 const switchColor = () => {
   props.data.color = COLORS[(COLORS.indexOf(props.data.color)+ 1) % 4]
+  updateComponent(props.data)
+}
+const toggleForceVisibility = () => {
+  //switch between 'null', 'false' or 'true'
+  props.data.forceVisiblility = props.data.forceVisiblility == null ? false : ( props.data.forceVisiblility ? null: true)
+  updateComponent(props.data)
+}
+const showHideArea = () => {
+  props.data.visible = !props.data.visible
   updateComponent(props.data)
 }
 
@@ -179,6 +191,8 @@ const setDraggable = (evt : MouseEvent & { target : HTMLElement}) => {
   gap: 5px;
   padding: 10px;
   line-height: 15px;
+  text-align: center;
+  vertical-align: center;
   width: 100%;
   &.editable {
     cursor: grab;
