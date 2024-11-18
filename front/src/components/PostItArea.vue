@@ -1,96 +1,96 @@
 <template>
   <OnClickOutside :options="{ ignore: [/* ... */] }" @trigger="editable = false">
-  <div class="border"
-       @click="editable=own"
-       :style="{
-          left: data.position[0] + 'px',
-          top: data.position[1] + 'px',
-          width: (data.position[2]-data.position[0]) + 'px',
-       }">
-    <div id="area-top" :class="[$attrs.class, { editable }]"
-         @mouseover="setDraggable"
-    ></div>
-    <div id="header-area" :class="[$attrs.class, { editable }]" @mouseover="setDraggable">
-      <div class="color-selected" :class="[data.color]" @click="switchColor" title="choose color" ></div>
-      <font-awesome-icon v-if="own" :icon="data.forceVisiblility ? faEye : faEyeSlash" :style="{ opacity : data.forceVisiblility == null ? '0.5' : '1'}" @click="toggleForceVisibility" title="toggle Post-it visibility"/>
-      <font-awesome-icon v-if="editable" :icon="data.visible ? farEye : farEyeSlash" style="" @click="showHideArea" title="toggle Area visibility"/>
-      <font-awesome-icon v-if="editable" :icon="faTrash" style="" @click="removeArea"/>
-      <div class="title" :contenteditable="own && editable"
-           style="min-width: 30px; min-height: 15px; padding-left: 5px;"
-           @blur="onTextTitle">{{ data.title  }}</div>
+    <div class="border"
+        @click="editable=own"
+        :style="{
+            left: data.position[0] + 'px',
+            top: data.position[1] + 'px',
+            width: (data.position[2]-data.position[0]) + 'px',
+        }">
+      <div id="area-top" :class="[$attrs.class, { editable }]"
+          @mouseover="setDraggable"
+      ></div>
+      <div id="header-area" :class="[$attrs.class, { editable }]" @mouseover="setDraggable">
+        <div class="color-selected" :class="[data.color]" @click="switchColor" title="choose color" ></div>
+        <font-awesome-icon v-if="own" :icon="data.forceVisiblility ? faEye : faEyeSlash" :style="{ opacity : data.forceVisiblility == null ? '0.5' : '1'}" @click="toggleForceVisibility" title="toggle Post-it visibility"/>
+        <font-awesome-icon v-if="editable" :icon="data.visible ? farEye : farEyeSlash" style="" @click="showHideArea" title="toggle Area visibility"/>
+        <font-awesome-icon v-if="editable" :icon="faTrash" style="" @click="removeArea"/>
+        <div class="title" :contenteditable="own && editable"
+            style="min-width: 30px; min-height: 15px; padding-left: 5px;"
+            @blur="onTextTitle">{{ data.title  }}</div>
+      </div>
     </div>
-  </div>
-  <div id="area-left" :class="[$attrs.class, { editable }]"
-       class="border"
-       @mouseover="setDraggable"
-       @click="editable=own"
-       :style="{
-          left: data.position[0] + 'px',
-          top: data.position[1] + 'px',
-          width: '3px',
-          height: (data.position[3]-data.position[1]) + 'px',
-       }"></div>
-  <div id="area-right" :class="[$attrs.class, { editable }]"
-       class="border"
-       @mouseover="setDraggable"
-       @click="editable=own"
-       :style="{
-          left: data.position[2]-5 + 'px',
-          top: data.position[1] + 'px',
-          width: '3px',
-          height: (data.position[3]-data.position[1]) + 'px',
-       }"></div>
-  <div id="area-bottom" :class="[$attrs.class, { editable }]"
-       class="border"
-       @mouseover="setDraggable"
-       @click="editable=own"
-       :style="{
-          left: data.position[0] + 'px',
-          top: data.position[3]-5 + 'px',
-          width: (data.position[2]-data.position[0]) + 'px',
-          height: '3px',
-       }"></div>
-  <div id="area-top-left" :class="[$attrs.class, { editable }]"
-       class="border"
-       @mouseover="setDraggable"
-       @click="editable=own"
-       :style="{
-          left: data.position[0] + 'px',
-          top: data.position[1] + 'px',
-          width: '15px',
-          height: '15px',
-       }"></div>
+    <div id="area-left" :class="[$attrs.class, { editable }]"
+        class="border"
+        @mouseover="setDraggable"
+        @click="editable=own"
+        :style="{
+            left: data.position[0] + 'px',
+            top: data.position[1] + 'px',
+            width: '15px',
+            height: (data.position[3]-data.position[1]) + 'px',
+        }"></div>
+    <div id="area-right" :class="[$attrs.class, { editable }]"
+        class="border"
+        @mouseover="setDraggable"
+        @click="editable=own"
+        :style="{
+            left: data.position[2]-5 + 'px',
+            top: data.position[1] + 'px',
+            width: '15px',
+            height: (data.position[3]-data.position[1]) + 'px',
+        }"></div>
+    <div id="area-bottom" :class="[$attrs.class, { editable }]"
+        class="border"
+        @mouseover="setDraggable"
+        @click="editable=own"
+        :style="{
+            left: data.position[0] + 'px',
+            top: data.position[3]-5 + 'px',
+            width: (data.position[2]-data.position[0]) + 'px',
+            height: '15px',
+        }"></div>
+    <div id="area-top-left" :class="[$attrs.class, { editable }]"
+        class="border"
+        @mouseover="setDraggable"
+        @click="editable=own"
+        :style="{
+            left: data.position[0] + 'px',
+            top: data.position[1] + 'px',
+            width: '15px',
+            height: '15px',
+        }"></div>
     <div id="area-top-right" :class="[$attrs.class, { editable }]"
-         class="border"
-         @mouseover="setDraggable"
-         @click="editable=own"
-         :style="{
+        class="border"
+        @mouseover="setDraggable"
+        @click="editable=own"
+        :style="{
           left: data.position[2] - 15 + 'px',
           top: data.position[1] + 'px',
           width: '15px',
           height: '15px',
-       }"></div>
+      }"></div>
     <div id="area-bottom-left" :class="[$attrs.class, { editable }]"
-         class="border"
-         @mouseover="setDraggable"
-         @click="editable=own"
-         :style="{
+        class="border"
+        @mouseover="setDraggable"
+        @click="editable=own"
+        :style="{
           left: data.position[0] + 'px',
           top: data.position[3] - 15 + 'px',
           width: '15px',
           height: '15px',
-       }"></div>
+      }"></div>
     <div id="area-bottom-right" :class="[$attrs.class, { editable }]"
-         class="border"
-         @mouseover="setDraggable"
-         @click="editable=own"
-         :style="{
+        class="border"
+        @mouseover="setDraggable"
+        @click="editable=own"
+        :style="{
           left: data.position[2] - 15 + 'px',
           top: data.position[3] - 15 + 'px',
           width: '15px',
           height: '15px',
-       }"></div>
-    </OnClickOutside>
+      }"></div>
+  </OnClickOutside>
 </template>
 
 <script setup lang="ts">
@@ -178,7 +178,16 @@ const setDraggable = (evt : MouseEvent & { target : HTMLElement}) => {
 
 <style scoped>
 
+#area-left, #area-right, #area-bottom, #area-top, #header-area,
+#area-top-left, #area-top-right {
+  cursor: pointer;
+  &.editable {
+    background-color: #8884;
+  }
+}
 #area-top {
+  margin-bottom: -2px; /* 2px = Click area width (5px) - Line width (3px) */
+  padding-top: 2px;
   border-top: 2px solid var(--border-color);
   &.editable {
     border-top: 2px dashed var(--border-color);
@@ -189,19 +198,23 @@ const setDraggable = (evt : MouseEvent & { target : HTMLElement}) => {
   display:flex;
   flex-direction: row;
   gap: 5px;
-  padding: 10px;
+  padding: 10px 10px;
   line-height: 15px;
   text-align: center;
   vertical-align: center;
-  width: 100%;
+  width: calc(100% - 20px); /* 100% - 2x padding */
   &.editable {
+    padding: 10px 25px;
+    width: calc(100% - 50px); /* 100% - 2x padding */
     cursor: grab;
   }
   .title {
     cursor: text;
   }
 }
+
 #area-left {
+  margin-right: -12px; /* 12px = Click area width (15px) - Line width (3px) */
   border-left: 2px solid var(--border-color);
   &.editable {
     border-left: 2px dashed var(--border-color);
@@ -209,6 +222,7 @@ const setDraggable = (evt : MouseEvent & { target : HTMLElement}) => {
   }
 }
 #area-right {
+  margin-left: -12px; /* 12px = Click area width (15px) - Line width (3px) */
   border-right: 2px solid var(--border-color);
   &.editable {
     border-right: 2px dashed var(--border-color);
@@ -216,6 +230,7 @@ const setDraggable = (evt : MouseEvent & { target : HTMLElement}) => {
   }
 }
 #area-bottom {
+  margin-top: -12px; /* 12px = Click area width (15px) - Line width (3px) */
   border-bottom: 2px solid var(--border-color);
   &.editable {
     border-bottom: 2px dashed var(--border-color);
