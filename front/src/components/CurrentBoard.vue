@@ -7,9 +7,9 @@
     </div>
 
     <div class="board-container">
-      <div class="moving-board" ref="draggable" :style="movableView.style.value" @dblclick.self.stop="createPostIt">
+      <div class="moving-board" ref="draggable" :style="movableView.style.value" @dblclick.stop="createPostIt">
         <template v-for="area in areas" :key="area.id">
-          <AreaComp v-if="area.visible || allowedToCreateArea" :data="area" :board="draggable" />
+          <test-rec v-if="area.visible || allowedToCreateArea" :data="area" :board="draggable" :class="{ 'user-unfocused' : focusedUser }"/>
         </template>
         <template v-for="postIt in postIts" :key="postIt.id">
           <PostItComp :data="postIt" :board="draggable" :class="{ 'user-unfocused' : focusedUser && postIt.owner !== focusedUser}"></PostItComp>
@@ -29,6 +29,7 @@ import AreaComp from './PostItArea.vue'
 import {type Area, type PostIt} from "@retro/shared";
 import { useDraggable } from "@vueuse/core";
 import {useUserStore} from "../stores/users.ts";
+import TestRec from "./testRec.vue";
 const userStore = useUserStore()
 const boardStore = useBoardStore();
 const board = computed(() => boardStore.board);
