@@ -1,8 +1,8 @@
 <template>
   <div>
     <div v-for="user in users" :class="{ disconnected: !user.loggedIn, me: user.uuid === me.uuid}" class="user" @click="() => $emit('focusUser', user.uuid)">
-      <img :alt="user.name" :src="user.picture" :title="user.name"/>
-      <font-awesome-icon :icon="faCircle" class="dot" size="xs"/>
+      <UserPicture :modelValue="user" />
+      <font-awesome-icon :icon="faCircle" class="dot" size="xs" />
     </div>
   </div>
 </template>
@@ -13,6 +13,7 @@ import {faCircle} from "@fortawesome/free-solid-svg-icons";
 import {User} from "@retro/shared";
 import {useUserStore} from "../stores/users.ts";
 import {computed} from "vue";
+import UserPicture from "./UserPicture.vue";
 
 defineProps<{
   users: Array<User>
