@@ -6,7 +6,7 @@
           :class="[data.color, $attrs.class, {own, editing, 'redacted-script-regular': !data.visible && !own}]"
           :style="{ left: data.position[0] - 50 + 'px', top: data.position[1] - 40 + 'px', transition: own ? '' : 'all 0.2s ease'}"
           @contextmenu.prevent="showContextMenu($event)"
-          @click="onClick"
+          @click.self.prevent="onClick"
 
       >
         <div class="inpostit"
@@ -17,8 +17,8 @@
           {{ hidetext }}
         </div>
         <div v-if="own" @click="handleActionClick('toggleVisible')"  class="show-hide-btn">
-          <font-awesome-icon v-if="data.visible" :icon="faEye" style=""/>
-          <font-awesome-icon v-else :icon="faEyeSlash" style=""/>
+          <font-awesome-icon v-if="data.visible" :icon="faFont" style=""/>
+          <font-awesome-icon v-else :icon="faSignature" style=""/>
         </div>
       </div>
     </OnClickOutside>
@@ -41,7 +41,7 @@ import {type Position, useDraggable} from "@vueuse/core"
 import {useBoardStore} from "../stores/board.ts";
 import ContextMenu from "./ContextMenu.vue";
 import { useUserStore } from '../stores/users.ts';
-import {faEye, faEyeSlash} from "@fortawesome/free-solid-svg-icons";
+import { faFont, faSignature} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 
 const props = defineProps<{ data: PostIt, board: HTMLElement|null }>()
@@ -62,6 +62,9 @@ const setDraggable = (evt : MouseEvent & { target : HTMLElement}) => {
       onEnd: (position: Position, _evt: PointerEvent) => {
         if (moved.value) {
           updateComponent(props.data)
+          moved.value = false
+        } else {
+          editing.value = true
         }
         setTimeout(() => {dragging.value = false}, 100) // Delay to prevent onClick to trigger
       },
@@ -85,6 +88,7 @@ const setDraggable = (evt : MouseEvent & { target : HTMLElement}) => {
 
 
 const onClick = () => {
+  console.log('onClick')
   if(!dragging.value) {
     editing.value = true
   }
@@ -111,7 +115,8 @@ const contextMenuActions = computed(() =>[
       { label: ' ', style: 'background-color: var(--green-post-it); width:10px; height:10px' , action: 'color-green' },
       { label: ' ', style: 'background-color: var(--yellow-post-it); width:10px; height:10px' , action: 'color-yellow' },
       { label: ' ', style: 'background-color: var(--orange-post-it); width:10px; height:10px' , action: 'color-orange' },
-      { label: ' ', style: 'background-color: var(--red-post-it); width:10px; height:10px' , action: 'color-red' }
+      { label: ' ', style: 'background-color: var(--red-post-it); width:10px; height:10px' , action: 'color-red' },
+      { label: ' ', style: 'background-color: var(--blue-post-it); width:10px; height:10px' , action: 'color-blue' }
     ]},
 ]);
 
@@ -141,6 +146,7 @@ const handleActionClick = (action: string) => {
     case 'color-yellow':
     case 'color-orange':
     case 'color-red':
+    case 'color-blue':
       props.data.color = action.split('-')[1]
       updateComponent(props.data)
       break;
@@ -209,6 +215,9 @@ const handleActionClick = (action: string) => {
 }
 .red {
   background-color: var(--red-post-it);
+}
+.blue {
+  background-color: var(--blue-post-it);
 }
 
 .post-it.user-unfocused {

@@ -36,9 +36,9 @@ const removeArea = () => {
     deleteComponent(props.data.id)
   }
 }
-const COLORS = ['yellow', 'red', 'green', 'orange']
+const COLORS = ['yellow', 'red', 'green', 'orange', 'blue']
 const switchColor = () => {
-  props.data.color = COLORS[(COLORS.indexOf(props.data.color)+ 1) % 4]
+  props.data.color = COLORS[(COLORS.indexOf(props.data.color)+ 1) % 5]
   updateComponent(props.data)
 }
 const toggleForceVisibility = () => {
@@ -102,6 +102,10 @@ const showHideArea = () => {
 .red {
   background-color: var(--red-post-it);
 }
+.blue {
+  background-color: var(--blue-post-it);
+}
+
 
 .user-unfocused {
   filter: blur(2px) grayscale(50%)

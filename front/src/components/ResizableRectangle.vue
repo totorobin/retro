@@ -226,8 +226,9 @@ const setDraggable = (evt : MouseEvent & { target : HTMLElement}, border: string
   margin: 5px;
 }
 .options {
-  position: relative;
-  bottom: 0;
+  position: absolute;
+  top: -50px;
+  right: 0px;
   gap: 5px;
   padding: 10px 10px;
   line-height: 15px;
