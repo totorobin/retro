@@ -1,26 +1,27 @@
 <template>
-  <UseDraggable class="post-it"
-                :class="[data.color, $attrs.class, {own, editing, 'redacted-script-regular': !data.visible && !own}]"
-                :style="[ own ? '' : { left: data.position[0] + 'px', top: data.position[1] + 'px', transition: 'all 0.2s ease'}]"
-                :initial-value="{ x: data.position[0], y: data.position[1] }"
-                @drag="onDrag"
-                @contextmenu.prevent="showContextMenu($event)"
-                :disabled="!own || editing"
-                @end="onDrop"
-                :capture="true"
-                :containerElement="board"
-  >
     <OnClickOutside @trigger="onClickOutside">
-      <div class="inpostit"
-                  :contenteditable="own && editing"
-                  @click="onClick"
-                  @blur="onTextChange"
+      <div
+          @mouseover="setDraggable"
+          class="post-it"
+          :class="[data.color, $attrs.class, {own, editing, 'redacted-script-regular': !data.visible && !own, 'own-hidden': !data.visible && own}]"
+          :style="{ left: data.position[0] - 50 + 'px', top: data.position[1] - 40 + 'px', transition: own ? '' : 'all 0.2s ease'}"
+          @contextmenu.prevent="showContextMenu($event)"
+          @click.self.prevent="onClick"
+
       >
-        {{ hidetext }}
-      </div>
-      <div v-if="own" @click="handleActionClick('toggleVisible')"  class="show-hide-btn">
-        <font-awesome-icon v-if="data.visible" :icon="faEye" style=""/>
-        <font-awesome-icon v-else :icon="faEyeSlash" style=""/>
+        <div class="inpostit"
+                    :contenteditable="own && editing"
+                    @blur="onTextChange"
+             :id="data.id"
+        >
+          {{ hidetext }}
+        </div>
+        <div v-if="own" @click="handleActionClick('toggleVisible')" class="show-hide-btn" :title="
+          data.visible ? 'Le texte est visible: Cliquer pour le cacher' : 'Le texte est caché: Cliquer pour le rendre lisible'
+      ">
+          <font-awesome-icon v-if="data.visible" :icon="faFont" style=""/>
+          <font-awesome-icon v-else :icon="faSignature" style=""/>
+        </div>
       </div>
     </OnClickOutside>
 
@@ -31,54 +32,73 @@
         :y="menuY"
         @action-clicked="handleActionClick"
     />
-      
-  </UseDraggable>
-
 
 </template>
 
 <script lang="ts" setup>
-import {OnClickOutside, UseDraggable} from '@vueuse/components'
+import {OnClickOutside} from '@vueuse/components'
 import {PostIt} from "@retro/shared";
 import {ref, computed} from "vue";
-import {type Position} from "@vueuse/core"
+import {type Position, useDraggable} from "@vueuse/core"
 import {useBoardStore} from "../stores/board.ts";
 import ContextMenu from "./ContextMenu.vue";
 import { useUserStore } from '../stores/users.ts';
-import {faEye, faEyeSlash} from "@fortawesome/free-solid-svg-icons";
+import { faFont, faSignature} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 
 const props = defineProps<{ data: PostIt, board: HTMLElement|null }>()
+defineOptions({ inheritAttrs: false })
 
-const {updatePostIt, deletePostIt} = useBoardStore();
+
+const {updateComponent, deleteComponent} = useBoardStore();
 const editing = ref(false)
 const dragging = ref(false)
 const userStore = useUserStore()
 const own = ref(userStore.me?.uuid === props.data.owner)
 
-const onDrag = () => {
-  dragging.value = true
-  editing.value = false
-}
-const onDrop = (position: Position, _event: PointerEvent) => {
-  if (props.data.position[0] !== position.x && props.data.position[1] !== position.y) {
-    props.data.position = [position.x, position.y]
-    updatePostIt(props.data)
+
+const setDraggable = (evt : MouseEvent & { target : HTMLElement}) => {
+  if(own.value &&  evt.target) {
+    const moved = ref(false)
+    useDraggable(evt.target, {
+      onEnd: (position: Position, _evt: PointerEvent) => {
+        if (moved.value) {
+          updateComponent(props.data)
+          moved.value = false
+        } else {
+          editing.value = true
+        }
+        setTimeout(() => {dragging.value = false}, 100) // Delay to prevent onClick to trigger
+      },
+      onStart: () => {
+        dragging.value = true
+        editing.value = false
+      },
+      onMove :(event) => {
+        moved.value = true
+        props.data.position = [event.x + 50, event.y + 40]
+      },
+      preventDefault: true,
+      capture: true,
+      exact: true,
+      stopPropagation: true,
+      containerElement : props.board,
+      disabled: () => editing.value
+    })
   }
-  setTimeout(() => {dragging.value = false}, 100) // Delay to prevent onClick to trigger
 }
 
 
 const onClick = () => {
+  console.log('onClick')
   if(!dragging.value) {
     editing.value = true
   }
 }
 const onTextChange = (evt: FocusEvent & { target: { innerText: string } }) => {
   if (props.data.text !== evt.target.innerText) {
-    console.log("endEdit: " + props.data.text + " <- " + evt.target.innerText)
     props.data.text = evt.target.innerText
-    updatePostIt({...props.data})
+    updateComponent({...props.data})
     evt.target.innerText = props.data.text // Fix duplicating text on edit
   }
   editing.value = false
@@ -97,7 +117,8 @@ const contextMenuActions = computed(() =>[
       { label: ' ', style: 'background-color: var(--green-post-it); width:10px; height:10px' , action: 'color-green' },
       { label: ' ', style: 'background-color: var(--yellow-post-it); width:10px; height:10px' , action: 'color-yellow' },
       { label: ' ', style: 'background-color: var(--orange-post-it); width:10px; height:10px' , action: 'color-orange' },
-      { label: ' ', style: 'background-color: var(--red-post-it); width:10px; height:10px' , action: 'color-red' }
+      { label: ' ', style: 'background-color: var(--red-post-it); width:10px; height:10px' , action: 'color-red' },
+      { label: ' ', style: 'background-color: var(--blue-post-it); width:10px; height:10px' , action: 'color-blue' }
     ]},
 ]);
 
@@ -121,19 +142,20 @@ const handleActionClick = (action: string) => {
   switch (action) {
     case 'delete':
       if (props.data.id)
-        deletePostIt(props.data.id)
+        deleteComponent(props.data.id)
       break;
     case 'color-green':
     case 'color-yellow':
     case 'color-orange':
     case 'color-red':
+    case 'color-blue':
       props.data.color = action.split('-')[1]
-      updatePostIt(props.data)
+      updateComponent(props.data)
       break;
     case 'toggleVisible':
       if(props.data.id) {
         props.data.visible = !props.data.visible;
-        updatePostIt(props.data)
+        updateComponent(props.data)
       }
       break;
     default:
@@ -154,6 +176,7 @@ const handleActionClick = (action: string) => {
 
   /* Shadow */
   box-shadow: 0 5px 10px -5px #000;
+
 }
 .post-it.own {
   cursor: grab;
@@ -174,6 +197,9 @@ const handleActionClick = (action: string) => {
   /* Manage word break properly */
   overflow-wrap: break-word;
   border-radius: 1em; /* easier to dragndrop from corners */
+
+  /* Add space at the end for buttons */
+  margin-bottom: .5em;
 }
 .post-it.editing .inpostit[contenteditable] {
   outline: 0px solid transparent;
@@ -181,6 +207,9 @@ const handleActionClick = (action: string) => {
 }
 .post-it:active {
   cursor: grabbing;
+}
+.post-it.own-hidden {
+  color: #666;
 }
 
 .green {
@@ -195,14 +224,29 @@ const handleActionClick = (action: string) => {
 .red {
   background-color: var(--red-post-it);
 }
+.blue {
+  background-color: var(--blue-post-it);
+}
 
 .post-it.user-unfocused {
   filter: blur(2px) grayscale(50%)
 }
 
 .show-hide-btn {
+  background: #EEE;
+	position: absolute;
+	left: 50%;
+	bottom: 0;
+	transform: translate(-50%, 50%);
+	border-radius: 50%;
+	width: 1em;
+	height: 1em;
   padding: 5px;
-  margin-bottom: -25px;
+	box-shadow: 0 1px 3px;
   cursor: pointer;
+  color: black;
+}
+.show-hide-btn:hover {
+	box-shadow: 0 1px 3px inset;
 }
 </style>
