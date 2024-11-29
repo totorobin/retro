@@ -54,7 +54,7 @@ const showHideArea = () => {
 
 <template>
   <ResizableRectangle style="border: 1px solid var(--border-color);" :containter-element="board" :top="data.position[1]" :left="data.position[0]" :width="width" :height="heigth" :editable="own" @end="updatePositions" >
-    <div id="header-area" :class="[$attrs.class, { editable }]" @mouseover="setDraggable">
+    <div id="header-area" :class="[$attrs.class]">
       <div class="color-selected" :class="[data.color]" @click.self.stop="switchColor" title="choose color" ></div>
       <font-awesome-icon v-if="own" :icon="data.forceVisiblility ? faEye : faEyeSlash" :style="{ opacity : data.forceVisiblility == null ? '0.5' : '1'}" @click.self.stop="toggleForceVisibility" title="toggle Post-it visibility"/>
       <div class="title" :contenteditable="own" @click.stop

@@ -13,6 +13,7 @@
   "license": "ISC",
   "dependencies": {
     "express": "^4.21.1",
+    "express-fileupload": "^1.5.1",
     "google-auth-library": "^9.14.2",
     "jose": "^5.9.6",
     "nodemon": "^3.1.7",
@@ -23,6 +24,7 @@
   "devDependencies": {
     "@retro/shared": "workspace:^",
     "@types/express": "^5.0.0",
+    "@types/express-fileupload": "^1.5.1",
     "@types/uuid": "^10.0.0"
   }
 }

@@ -24,6 +24,12 @@ export interface Area extends BoardComponent {
     title: string;
     visible: boolean;
     forceVisiblility: boolean | null;
+    lock: boolean;
+}
+
+export interface Picture extends BoardComponent {
+    imageId: string;
+    lock: boolean;
 }
 
 export interface Board {

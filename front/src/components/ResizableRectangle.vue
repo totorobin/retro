@@ -7,8 +7,8 @@ const top = defineModel<number>('top')
 const left = defineModel<number>('left')
 const width = defineModel<number>('width')
 const height = defineModel<number>('height')
-const edition = defineModel<boolean>('edition', { defaultValue: false })
-const { editable, containterElement } = defineProps< { editable: boolean, containterElement : HTMLElement|null} >()
+const edition = defineModel<boolean>('edition')
+const props = defineProps< { editable: boolean, containterElement : HTMLElement|null} >()
 const emits = defineEmits<{
   end: [top: number, left: number, width: number, height: number]
 }>()
@@ -70,7 +70,7 @@ const setDraggable = (evt : MouseEvent & { target : HTMLElement}, border: string
       exact: true,
       stopPropagation: true,
       disabled: () => !edition.value,
-      containerElement : containterElement
+      containerElement : props.containterElement
     })
   }
 }

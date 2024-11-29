@@ -1,5 +1,5 @@
 import {defineStore} from "pinia";
-import {Area, Board, BoardComponent, PostIt} from "@retro/shared";
+import {Area, Board, BoardComponent, Picture, PostIt} from "@retro/shared";
 import {ref} from "vue";
 import {socket} from "../socket.ts";
 import {useRouter} from "vue-router";
@@ -58,7 +58,19 @@ export const useBoardStore = defineStore("board", () => {
                 color: 'yellow',
                 title: '',
                 visible: true,
-                forceVisiblility: null
+                forceVisiblility: null,
+                lock: false,
+            }
+            socket.emit('addComponent', board.value.uuid, component, callback)
+        }
+    }
+    const createPicture = (pos: number[], imageId: string, callback: (componentId: string) => void) => {
+        if(board.value) {
+            const component: Picture = {
+                position: pos,
+                type: 'picture',
+                imageId: imageId,
+                lock: false
             }
             socket.emit('addComponent', board.value.uuid, component, callback)
         }
@@ -87,6 +99,7 @@ export const useBoardStore = defineStore("board", () => {
         createPostIt,
         updateComponent,
         deleteComponent,
-        createArea
+        createArea,
+        createPicture
     };
 });
