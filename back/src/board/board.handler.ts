@@ -93,6 +93,7 @@ export default function ({userRepo, boardRepo}: Components, emitter: EventEmitte
             async function (boardId: string, component: BoardComponent, callback: (componentId: string) => void) {
                 component.id = uuid();
                 component.owner = socket.data.userId;
+                component.priority = 0;
 
                 let board: SavedBoard;
                 try {

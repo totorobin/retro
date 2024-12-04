@@ -11,6 +11,7 @@ export interface BoardComponent {
     owner?: string;
     type: string;
     position: number[];
+    priority: number;
 }
 
 export interface PostIt extends BoardComponent {

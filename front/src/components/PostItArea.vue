@@ -1,108 +1,15 @@
-<template>
-  <OnClickOutside :options="{ ignore: [/* ... */] }" @trigger="editable = false">
-    <div class="border"
-        @click="editable=own"
-        :style="{
-            left: data.position[0] + 'px',
-            top: data.position[1] + 'px',
-            width: (data.position[2]-data.position[0]) + 'px',
-        }">
-      <div id="area-top" :class="[$attrs.class, { editable }]"
-          @mouseover="setDraggable"
-      ></div>
-      <div id="header-area" :class="[$attrs.class, { editable }]" @mouseover="setDraggable">
-        <div class="color-selected" :class="[data.color]" @click="switchColor" title="choose color" ></div>
-        <font-awesome-icon v-if="own" :icon="data.forceVisiblility ? faEye : faEyeSlash" :style="{ opacity : data.forceVisiblility == null ? '0.5' : '1'}" @click="toggleForceVisibility" title="toggle Post-it visibility"/>
-        <font-awesome-icon v-if="editable" :icon="data.visible ? farEye : farEyeSlash" style="" @click="showHideArea" title="toggle Area visibility"/>
-        <font-awesome-icon v-if="editable" :icon="faTrash" style="" @click="removeArea"/>
-        <div class="title" :contenteditable="own && editable"
-            style="min-width: 30px; min-height: 15px; padding-left: 5px;"
-            @blur="onTextTitle">{{ data.title  }}</div>
-      </div>
-    </div>
-    <div id="area-left" :class="[$attrs.class, { editable }]"
-        class="border"
-        @mouseover="setDraggable"
-        @click="editable=own"
-        :style="{
-            left: data.position[0] + 'px',
-            top: data.position[1] + 'px',
-            width: '15px',
-            height: (data.position[3]-data.position[1]) + 'px',
-        }"></div>
-    <div id="area-right" :class="[$attrs.class, { editable }]"
-        class="border"
-        @mouseover="setDraggable"
-        @click="editable=own"
-        :style="{
-            left: data.position[2]-5 + 'px',
-            top: data.position[1] + 'px',
-            width: '15px',
-            height: (data.position[3]-data.position[1]) + 'px',
-        }"></div>
-    <div id="area-bottom" :class="[$attrs.class, { editable }]"
-        class="border"
-        @mouseover="setDraggable"
-        @click="editable=own"
-        :style="{
-            left: data.position[0] + 'px',
-            top: data.position[3]-5 + 'px',
-            width: (data.position[2]-data.position[0]) + 'px',
-            height: '15px',
-        }"></div>
-    <div id="area-top-left" :class="[$attrs.class, { editable }]"
-        class="border"
-        @mouseover="setDraggable"
-        @click="editable=own"
-        :style="{
-            left: data.position[0] + 'px',
-            top: data.position[1] + 'px',
-            width: '15px',
-            height: '15px',
-        }"></div>
-    <div id="area-top-right" :class="[$attrs.class, { editable }]"
-        class="border"
-        @mouseover="setDraggable"
-        @click="editable=own"
-        :style="{
-          left: data.position[2] - 15 + 'px',
-          top: data.position[1] + 'px',
-          width: '15px',
-          height: '15px',
-      }"></div>
-    <div id="area-bottom-left" :class="[$attrs.class, { editable }]"
-        class="border"
-        @mouseover="setDraggable"
-        @click="editable=own"
-        :style="{
-          left: data.position[0] + 'px',
-          top: data.position[3] - 15 + 'px',
-          width: '15px',
-          height: '15px',
-      }"></div>
-    <div id="area-bottom-right" :class="[$attrs.class, { editable }]"
-        class="border"
-        @mouseover="setDraggable"
-        @click="editable=own"
-        :style="{
-          left: data.position[2] - 15 + 'px',
-          top: data.position[3] - 15 + 'px',
-          width: '15px',
-          height: '15px',
-      }"></div>
-  </OnClickOutside>
-</template>
-
 <script setup lang="ts">
+
+import ResizableRectangle from "./ResizableRectangle.vue";
 import {Area} from "@retro/shared";
-import {type Position, useDraggable} from "@vueuse/core";
-import {ref} from "vue";
-import {OnClickOutside} from "@vueuse/components";
 import {useBoardStore} from "../stores/board.ts";
 import {useUserStore} from "../stores/users.ts";
-import { faTrash , faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
-import { faEye as farEye, faEyeSlash as farEyeSlash } from "@fortawesome/free-regular-svg-icons";
+import {computed, ref} from "vue";
+import {faEye, faEyeSlash, faTrash, faForwardStep, faForwardFast, faBackwardStep, faBackwardFast} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
+import {faEye as farEye, faEyeSlash as farEyeSlash} from "@fortawesome/free-regular-svg-icons";
+
+import {useLayerOrder} from "../stores/LayerOrder.ts";
 
 
 const props = defineProps<{ data: Area, board: HTMLElement|null }>()
@@ -111,7 +18,13 @@ const {updateComponent, deleteComponent} = useBoardStore();
 const userStore = useUserStore()
 const own = ref(userStore.me?.uuid === props.data.owner)
 
-const editable = ref(false)
+const width = computed( () => props.data.position[2] - props.data.position[0])
+const heigth = computed(() => props.data.position[3] - props.data.position[1])
+const updatePositions = (top, left, width, height) => {
+  props.data.position = [left, top, left+width, top+height]
+  updateComponent(props.data)
+}
+
 
 const onTextTitle = (evt: FocusEvent & { target: { innerText: string } }) => {
   if (props.data.title !== evt.target.innerText) {
@@ -125,9 +38,9 @@ const removeArea = () => {
     deleteComponent(props.data.id)
   }
 }
-const COLORS = ['yellow', 'red', 'green', 'orange']
+const COLORS = ['yellow', 'red', 'green', 'orange', 'blue']
 const switchColor = () => {
-  props.data.color = COLORS[(COLORS.indexOf(props.data.color)+ 1) % 4]
+  props.data.color = COLORS[(COLORS.indexOf(props.data.color)+ 1) % 5]
   updateComponent(props.data)
 }
 const toggleForceVisibility = () => {
@@ -140,60 +53,33 @@ const showHideArea = () => {
   updateComponent(props.data)
 }
 
-const setDraggable = (evt : MouseEvent & { target : HTMLElement}) => {
-  if(editable.value &&  evt.target) {
-    const border = evt.target.id
-    useDraggable(evt.target, {
-      onEnd: (_pos: Position, _evt: PointerEvent) => {
-        updateComponent(props.data)
-      },
-      onMove :(event) => {
-        switch (border) {
-          case 'area-top': props.data.position[1] = event.y; break;
-          case 'area-left': props.data.position[0] = event.x; break;
-          case 'area-right': props.data.position[2] = event.x; break;
-          case 'area-bottom': props.data.position[3] = event.y; break;
-          case 'area-top-left':  props.data.position[1] = event.y; props.data.position[0] = event.x; break;
-          case 'area-top-right':  props.data.position[1] = event.y; props.data.position[2] = event.x; break;
-          case 'area-bottom-left':  props.data.position[3] = event.y; props.data.position[0] = event.x; break;
-          case 'area-bottom-right':  props.data.position[3] = event.y; props.data.position[2] = event.x; break;
-          case 'header-area':
-            const width = props.data.position[2] - props.data.position[0]
-            const height = props.data.position[3] - props.data.position[1]
-            props.data.position = [ event.x, event.y, event.x + width, event.y + height ];
-            break;
-        }
-      },
-      preventDefault: true,
-      capture: true,
-      exact: true,
-      stopPropagation: true,
-      disabled: () => !editable.value,
-      containerElement : props.board
-    })
-  }
-}
-
+//Move frontward, backward
+const { backwardAll, backward, forward, forwardAll } = useLayerOrder()
 </script>
+
+<template>
+  <ResizableRectangle style="border: 1px solid var(--border-color);" :containter-element="board" :top="data.position[1]" :left="data.position[0]" :width="width" :height="heigth" :editable="own" @end="updatePositions" >
+    <div id="header-area" :class="[$attrs.class]">
+      <div class="color-selected" :class="[data.color]" @click.self.stop="switchColor" title="choose color" ></div>
+      <font-awesome-icon v-if="own" :icon="data.forceVisiblility ? faEye : faEyeSlash" :style="{ opacity : data.forceVisiblility == null ? '0.5' : '1'}" @click.self.stop="toggleForceVisibility" title="toggle Post-it visibility"/>
+      <div class="title" :contenteditable="own" @click.stop
+           style="min-width: 30px; min-height: 15px; padding-left: 5px;"
+           @blur="onTextTitle">{{ data.title  }}</div>
+    </div>
+    <template #options>
+      <font-awesome-icon :icon="faBackwardFast" style="cursor: pointer"  @click.stop="backwardAll(data.id)"/>
+      <font-awesome-icon :icon="faBackwardStep" style="cursor: pointer"  @click.stop="backward(data.id)"/>
+      <font-awesome-icon :icon="faForwardStep" style="cursor: pointer"  @click.stop="forward(data.id)"/>
+      <font-awesome-icon :icon="faForwardFast" style="cursor: pointer"  @click.stop="forwardAll(data.id)"/>
+      <font-awesome-icon :icon="data.visible ? farEye : farEyeSlash" style="cursor: pointer" @click.stop="showHideArea" title="toggle Area visibility"/>
+      <font-awesome-icon :icon="faTrash" style="cursor: pointer"  @click.stop="removeArea"/>
+    </template>
+  </ResizableRectangle>
+</template>
+
 
 <style scoped>
 
-#area-left, #area-right, #area-bottom, #area-top, #header-area,
-#area-top-left, #area-top-right {
-  cursor: pointer;
-  &.editable {
-    background-color: #8884;
-  }
-}
-#area-top {
-  margin-bottom: -2px; /* 2px = Click area width (5px) - Line width (3px) */
-  padding-top: 2px;
-  border-top: 2px solid var(--border-color);
-  &.editable {
-    border-top: 2px dashed var(--border-color);
-    cursor: n-resize;
-  }
-}
 #header-area {
   display:flex;
   flex-direction: row;
@@ -203,62 +89,9 @@ const setDraggable = (evt : MouseEvent & { target : HTMLElement}) => {
   text-align: center;
   vertical-align: center;
   width: calc(100% - 20px); /* 100% - 2x padding */
-  &.editable {
-    padding: 10px 25px;
-    width: calc(100% - 50px); /* 100% - 2x padding */
-    cursor: grab;
-  }
   .title {
     cursor: text;
   }
-}
-
-#area-left {
-  margin-right: -12px; /* 12px = Click area width (15px) - Line width (3px) */
-  border-left: 2px solid var(--border-color);
-  &.editable {
-    border-left: 2px dashed var(--border-color);
-    cursor: e-resize;
-  }
-}
-#area-right {
-  margin-left: -12px; /* 12px = Click area width (15px) - Line width (3px) */
-  border-right: 2px solid var(--border-color);
-  &.editable {
-    border-right: 2px dashed var(--border-color);
-    cursor: e-resize;
-  }
-}
-#area-bottom {
-  margin-top: -12px; /* 12px = Click area width (15px) - Line width (3px) */
-  border-bottom: 2px solid var(--border-color);
-  &.editable {
-    border-bottom: 2px dashed var(--border-color);
-    cursor: n-resize;
-  }
-}
-#area-top-left {
-  &.editable {
-    cursor: nw-resize;
-  }
-}
-#area-top-right {
-  &.editable {
-    cursor: ne-resize;
-  }
-}
-#area-bottom-left {
-  &.editable {
-    cursor: sw-resize;
-  }
-}
-#area-bottom-right {
-  &.editable {
-    cursor: se-resize;
-  }
-}
-.border {
-  position: absolute;
 }
 .color-selected {
   height: 15px;
@@ -278,6 +111,10 @@ const setDraggable = (evt : MouseEvent & { target : HTMLElement}) => {
 .red {
   background-color: var(--red-post-it);
 }
+.blue {
+  background-color: var(--blue-post-it);
+}
+
 
 .user-unfocused {
   filter: blur(2px) grayscale(50%)

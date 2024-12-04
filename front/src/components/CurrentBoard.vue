@@ -29,7 +29,7 @@ import PostItComp from './PostIt.vue'
 import {type Area, type PostIt, type Picture} from "@retro/shared";
 import { useDraggable } from "@vueuse/core";
 import {useUserStore} from "../stores/users.ts";
-import TestRec from "./testRec.vue";
+import TestRec from "./PostItArea.vue";
 const userStore = useUserStore()
 const boardStore = useBoardStore();
 const board = computed(() => boardStore.board);
@@ -75,7 +75,7 @@ async function onDrop(files: File[] | null, event: MouseEvent) {
 const { isOverDropZone } =useDropZone(draggable, {
   onDrop,
   // specify the types of data to be received.
-  dataTypes: ['image/jpeg','image/png'],
+  dataTypes: ['image/jpeg','image/png', 'image/webp', 'image/gif', 'image/svg'],
   // control multi-file drop
   multiple: false,
   // whether to prevent default behavior for unhandled events
@@ -116,7 +116,15 @@ const createPostIt = (event: MouseEvent) => {
 }
 
 // Areas
-const areas = computed(() => board.value?.components?.filter(c => c.type !== 'postIt'))
+const _sort_areas = (a:BoardComponent,b:BoardComponent):number => {
+  if(a.priority == b.priority) {
+    return 0;
+  } else if(a.priority > b.priority) {
+    return 1;
+  }
+  return -1;
+}
+const areas = computed(() => board.value?.components?.filter(c => c.type !== 'postIt').sort(_sort_areas));
 
 const focusedUser = ref<string | null>(null)
 const focusUser = (userId : string | null) => {
@@ -129,7 +137,7 @@ const createArea = () => {
   const pos = [
     - movableView.x.value + window.innerWidth/2 - DEFAULT_AREA_SIZE[0]/2,
     - movableView.y.value + window.innerHeight/2 - DEFAULT_AREA_SIZE[1]/2,
-   - movableView.x.value +  window.innerWidth/2 + DEFAULT_AREA_SIZE[0]/2,
+    - movableView.x.value +  window.innerWidth/2 + DEFAULT_AREA_SIZE[0]/2,
     - movableView.y.value + window.innerHeight/2 + DEFAULT_AREA_SIZE[1]/2,
   ]
   boardStore.createArea(pos, (areaid: string) => {
