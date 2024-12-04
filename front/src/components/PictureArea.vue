@@ -36,7 +36,6 @@ const { backwardAll, backward, forward, forwardAll } = useLayerOrder()
   <ResizableRectangle :containter-element="board" :top="data.position[1]" :left="data.position[0]" :width="width" :height="height" :editable="own" @end="updatePositions" >
   <img :src="`/data/pictures/${data.imageId}`" />
     <template #options>
-      <span>Prio: {{ data.priority }}</span>
       <font-awesome-icon :icon="faBackwardFast" style="cursor: pointer"  @click.stop="backwardAll(data.id)"/>
       <font-awesome-icon :icon="faBackwardStep" style="cursor: pointer"  @click.stop="backward(data.id)"/>
       <font-awesome-icon :icon="faForwardStep" style="cursor: pointer"  @click.stop="forward(data.id)"/>

@@ -40,7 +40,7 @@ const removeArea = () => {
 }
 const COLORS = ['yellow', 'red', 'green', 'orange', 'blue']
 const switchColor = () => {
-  props.data.color = COLORS[(COLORS.indexOf(props.data.color)+ 1) % 5]
+  props.data.color = COLORS[(COLORS.indexOf(props.data.color)+ 1) % COLORS.length]
   updateComponent(props.data)
 }
 const toggleForceVisibility = () => {

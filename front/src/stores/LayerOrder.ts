@@ -21,13 +21,6 @@ export const useLayerOrder = defineStore("layerOrder", () => {
     }
     const forward= (id) => {
         const currentComp = boardStore.board.components.find(c => c.id === id);
-        /*
-            1:
-                1, [2], 3, 3, 4 => 1, 3, 3, [4], 4
-                1, [2], 2, 4 => 1, 2, [3], 4
-                1, 2, 3, [4] => 1, 2, 3, [4]
-                1, 2, 3, [4], 4 => 1, 2, 3, 4, [5]
-         */
 
         const otherPrios = boardStore.board.components
             .filter(c => currentComp.type == 'postIt' ? c.type == 'postIt' : c.type != 'postIt')
