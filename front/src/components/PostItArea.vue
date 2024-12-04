@@ -28,7 +28,7 @@ const own = ref(userStore.me?.uuid === props.data.owner)
 
 const width = computed(() => props.data.position[2] - props.data.position[0])
 const heigth = computed(() => props.data.position[3] - props.data.position[1])
-const updatePositions = (top, left, width, height) => {
+const updatePositions = (top: number, left: number, width: number, height: number) => {
   props.data.position = [left, top, left + width, top + height]
   updateComponent(props.data)
 }
@@ -75,7 +75,7 @@ const {backwardAll, backward, forward, forwardAll} = useLayerOrder()
                          title="toggle Post-it visibility" @click.self.stop="toggleForceVisibility"/>
       <div :contenteditable="own" class="title" style="min-width: 30px; min-height: 15px; padding-left: 5px;"
            @blur="onTextTitle"
-           @click.stop>{{ data.title }}
+           @click.stop>{{ data.title || '' }}
       </div>
     </div>
     <template #options>

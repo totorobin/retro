@@ -18,7 +18,7 @@ const own = ref(userStore.me?.uuid === props.data.owner)
 const width = computed(() => props.data.position[2] - props.data.position[0])
 const height = computed(() => props.data.position[3] - props.data.position[1])
 
-const updatePositions = (top, left, width, height) => {
+const updatePositions = (top : number, left: number, width: number, height: number) => {
   props.data.position = [left, top, left + width, top + height]
   updateComponent(props.data)
 }

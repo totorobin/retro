@@ -19,7 +19,7 @@ export const useUserStore = defineStore("users", () => {
 
     const myBoards = () => {
         console.log("asked for Boards");
-        return new Promise((resolve) => socket.emit("myBoards", (myBoards: Array<SavedBoard>) => {
+        return new Promise<SavedBoard[]>((resolve) => socket.emit("myBoards", (myBoards: Array<SavedBoard>) => {
             console.log("myBoards", myBoards);
             resolve(myBoards);
         }));

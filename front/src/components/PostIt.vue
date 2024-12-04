@@ -59,7 +59,7 @@ const setDraggable = (evt: MouseEvent & { target: HTMLElement }) => {
   if (own.value && evt.target) {
     const moved = ref(false)
     useDraggable(evt.target, {
-      onEnd: (position: Position, _evt: PointerEvent) => {
+      onEnd: () => {
         if (moved.value) {
           updateComponent(props.data)
           moved.value = false
@@ -131,7 +131,7 @@ const rot13 = (text: string) => text.split('')
 const hidetext = computed(() => (!props.data.visible && !own.value) ? rot13(props.data.text) : props.data.text);
 
 
-const showContextMenu = (event: PointerEvent) => {
+const showContextMenu = (event: MouseEvent) => {
   if (own.value) {
     event.preventDefault();
     showMenu.value = true;
