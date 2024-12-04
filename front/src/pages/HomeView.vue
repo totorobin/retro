@@ -4,7 +4,7 @@
     <LoggedUser/>
   </div>
   <button @click="createBoard">Create Board</button>
-  <MyBoards />
+  <MyBoards/>
   <div class="panel-right-bottom">
     <ListPlayers/>
   </div>
@@ -28,6 +28,7 @@ const createBoard = () => {
 button {
   margin-top: 10vh;
 }
+
 .header {
   display: flex;
   flex-direction: row-reverse;

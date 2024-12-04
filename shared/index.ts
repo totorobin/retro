@@ -56,7 +56,7 @@ export interface ServerToClientEvents {
 
 export interface ClientToServerEvents {
     login: (me: Partial<User>) => void;
-    myBoards: (callback: (myBoards : Array<SavedBoard>) => void) => void;
+    myBoards: (callback: (myBoards: Array<SavedBoard>) => void) => void;
     newBoard: (
         boardId: string | null,
         callback: (boardId: string) => void

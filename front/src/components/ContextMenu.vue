@@ -8,9 +8,13 @@
         v-for="action in actions"
         :key="action.action"
     >
-      <div v-if="Array.isArray(action.action)" :style="action.style">{{ action.label }}<p v-for="a in action.action" @click="emitAction(a.action)" :style="a.style">{{ a.label }}</p>
+      <div v-if="Array.isArray(action.action)" :style="action.style">{{ action.label }}<p v-for="a in action.action"
+                                                                                          :style="a.style"
+                                                                                          @click="emitAction(a.action)">{{
+          a.label
+        }}</p>
       </div>
-      <div v-else  @click="emitAction(action.action)">{{ action.label }}</div>
+      <div v-else @click="emitAction(action.action)">{{ action.label }}</div>
     </template>
   </div>
 </template>
@@ -18,7 +22,15 @@
 <script lang="ts" setup>
 import {defineEmits, defineProps} from 'vue';
 
-const {actions, x, y} = defineProps<{ actions: Array<{ label: string, style: string, action: string | Array<{ label: string, style: string, action: string }>}>, x: number, y: number }>();
+const {actions, x, y} = defineProps<{
+  actions: Array<{
+    label: string,
+    style: string,
+    action: string | Array<{ label: string, style: string, action: string }>
+  }>,
+  x: number,
+  y: number
+}>();
 const emit = defineEmits<{
   'action-clicked': [action: string]
 }>();
@@ -55,6 +67,7 @@ const emitAction = (action: string) => {
   display: inline-flex;
   border: 1px solid transparent;
 }
+
 .context-menu div p:hover {
   margin: 2px;
   border: 1px solid var(--border-color);
@@ -67,7 +80,6 @@ const emitAction = (action: string) => {
 .context-menu .action:hover {
   cursor: pointer;
 }
-
 
 
 </style>

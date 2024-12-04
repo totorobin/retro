@@ -1,10 +1,10 @@
 <script lang="ts" setup>
 import {useRouter} from 'vue-router'
-import { useUserStore} from "../stores/users.ts";
+import {useUserStore} from "../stores/users.ts";
 import {onMounted, ref} from "vue";
 
 const router = useRouter()
-const { myBoards } = useUserStore()
+const {myBoards} = useUserStore()
 
 const goToBoard = (boardId: string) => {
   router.push(`/r/${boardId}`)

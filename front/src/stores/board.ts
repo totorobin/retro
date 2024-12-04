@@ -6,7 +6,7 @@ import {useRouter} from "vue-router";
 
 export const useBoardStore = defineStore("board", () => {
     const router = useRouter();
-    const board = ref<Board|null>();
+    const board = ref<Board | null>();
 
     const bindEvents = () => {
         socket.on("board", (_board: Board) => {
@@ -51,7 +51,7 @@ export const useBoardStore = defineStore("board", () => {
     }
 
     const createArea = (pos: number[], callback: (componentId: string) => void) => {
-        if(board.value) {
+        if (board.value) {
             const component: Area = {
                 position: pos,
                 type: 'area',
@@ -65,7 +65,7 @@ export const useBoardStore = defineStore("board", () => {
         }
     }
     const createPicture = (pos: number[], imageId: string, callback: (componentId: string) => void) => {
-        if(board.value) {
+        if (board.value) {
             const component: Picture = {
                 position: pos,
                 type: 'picture',
