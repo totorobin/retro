@@ -11,6 +11,7 @@ export interface BoardComponent {
     owner?: string;
     type: string;
     position: number[];
+    priority: number;
 }
 
 export interface PostIt extends BoardComponent {
@@ -19,14 +20,29 @@ export interface PostIt extends BoardComponent {
     visible: boolean;
 }
 
+export interface Area extends BoardComponent {
+    color: string;
+    title: string;
+    visible: boolean;
+    forceVisiblility: boolean | null;
+    lock: boolean;
+}
+
+export interface Picture extends BoardComponent {
+    imageId: string;
+    lock: boolean;
+}
+
 export interface Board {
     uuid: string
+    ownerId: string
     users: Array<User>
     components: Array<BoardComponent>
 }
 
 export interface SavedBoard {
     uuid: string,
+    ownerId: string
     users: string[],
     components: BoardComponent[],
 }

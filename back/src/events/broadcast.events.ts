@@ -30,6 +30,7 @@ export default function (io: Server, {userRepo, boardRepo}: Components) {
 
                 const board: Board = {
                     uuid: savedBoard.uuid,
+                    ownerId: savedBoard.ownerId,
                     users: [],
                     components: savedBoard.components,
                 }
