@@ -10,7 +10,8 @@
     >
       <div v-if="Array.isArray(action.action)" :style="action.style">{{ action.label }}<p v-for="a in action.action"
                                                                                           :style="a.style"
-                                                                                          @click="emitAction(a.action)">{{
+                                                                                          @click="emitAction(a.action)">
+        {{
           a.label
         }}</p>
       </div>

@@ -90,7 +90,7 @@ export default function ({userRepo, boardRepo}: Components, emitter: EventEmitte
             socket.leave(`board-${boardId}`);
         },
         addComponent: (io: Server, socket: Socket) =>
-            async function (boardId: string, component: BoardComponent, callback: (componentId: string) => void) {
+            async function (boardId: string, component: Partial<BoardComponent>, callback: (componentId: string) => void) {
                 component.id = uuid();
                 component.owner = socket.data.userId;
                 component.priority = 0;
@@ -103,7 +103,7 @@ export default function ({userRepo, boardRepo}: Components, emitter: EventEmitte
                     socket.emit("kickOut")
                     return
                 }
-                board.components.push(component);
+                board.components.push(component as BoardComponent);
                 if (component.type === 'postIt') {
                     updatePostItColor(board, component as PostIt)
                 }
@@ -115,7 +115,7 @@ export default function ({userRepo, boardRepo}: Components, emitter: EventEmitte
                 callback(component.id);
             },
         updateComponent: (io: Server, socket: Socket) =>
-            async function (boardId: string, component: BoardComponent) {
+            async function (boardId: string, component: Partial<BoardComponent>) {
                 let board: SavedBoard;
                 try {
                     board = await boardRepo.findById(boardId);

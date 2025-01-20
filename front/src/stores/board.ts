@@ -39,7 +39,7 @@ export const useBoardStore = defineStore("board", () => {
 
     const createPostIt = (pos: number[], callback: (componentId: string) => void) => {
         if (board.value) {
-            const component: PostIt = {
+            const component: Partial<PostIt> = {
                 position: pos,
                 type: 'postIt',
                 text: '',
@@ -52,7 +52,7 @@ export const useBoardStore = defineStore("board", () => {
 
     const createArea = (pos: number[], callback: (componentId: string) => void) => {
         if (board.value) {
-            const component: Area = {
+            const component: Partial<Area> = {
                 position: pos,
                 type: 'area',
                 color: 'yellow',
@@ -66,7 +66,7 @@ export const useBoardStore = defineStore("board", () => {
     }
     const createPicture = (pos: number[], imageId: string, callback: (componentId: string) => void) => {
         if (board.value) {
-            const component: Picture = {
+            const component: Partial<Picture> = {
                 position: pos,
                 type: 'picture',
                 imageId: imageId,

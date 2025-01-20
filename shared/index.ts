@@ -7,8 +7,8 @@ export interface User {
 }
 
 export interface BoardComponent {
-    id?: string;
-    owner?: string;
+    id: string;
+    owner: string;
     type: string;
     position: number[];
     priority: number;
@@ -63,8 +63,8 @@ export interface ClientToServerEvents {
     ) => void;
     joinBoard: (boardId: string) => void
     leaveBoard: (boardId: string) => void
-    addComponent: (boardId: string, component: BoardComponent, callback: (componentId: string) => void) => void
-    updateComponent: (boardId: string, component: BoardComponent) => void
+    addComponent: (boardId: string, component: Partial<BoardComponent>, callback: (componentId: string) => void) => void
+    updateComponent: (boardId: string, component: Partial<BoardComponent>) => void
     deleteComponent: (boardId: string, componentId: string) => void
 }
 

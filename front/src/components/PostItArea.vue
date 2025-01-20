@@ -34,11 +34,13 @@ const updatePositions = (top: number, left: number, width: number, height: numbe
 }
 
 
-const onTextTitle = (evt: FocusEvent & { target: { innerText: string } }) => {
-  if (props.data.title !== evt.target.innerText) {
-    props.data.title = evt.target.innerText
+const onTextTitle = (evt: FocusEvent) => {
+  const target = evt.target as HTMLElement;
+
+  if (props.data.title !== target.innerText) {
+    props.data.title = target.innerText
     updateComponent(props.data)
-    evt.target.innerText = props.data.title // Fix duplicating text on edit
+    target.innerText = props.data.title // Fix duplicating text on edit
   }
 }
 const removeArea = () => {
@@ -67,7 +69,8 @@ const {backwardAll, backward, forward, forwardAll} = useLayerOrder()
 
 <template>
   <ResizableRectangle :containter-element="board" :editable="own" :height="heigth"
-                      :left="data.position[0]" :top="data.position[1]" :width="width" style="border: 1px solid var(--border-color);" @end="updatePositions">
+                      :left="data.position[0]" :top="data.position[1]" :width="width"
+                      style="border: 1px solid var(--border-color);" @end="updatePositions">
     <div id="header-area" :class="[$attrs.class]">
       <div :class="[data.color]" class="color-selected" title="choose color" @click.self.stop="switchColor"></div>
       <font-awesome-icon v-if="own" :icon="data.forceVisiblility ? faEye : faEyeSlash"
@@ -83,7 +86,8 @@ const {backwardAll, backward, forward, forwardAll} = useLayerOrder()
       <font-awesome-icon :icon="faBackwardStep" style="cursor: pointer" @click.stop="backward(data.id)"/>
       <font-awesome-icon :icon="faForwardStep" style="cursor: pointer" @click.stop="forward(data.id)"/>
       <font-awesome-icon :icon="faForwardFast" style="cursor: pointer" @click.stop="forwardAll(data.id)"/>
-      <font-awesome-icon :icon="data.visible ? farEye : farEyeSlash" style="cursor: pointer" title="toggle Area visibility"
+      <font-awesome-icon :icon="data.visible ? farEye : farEyeSlash" style="cursor: pointer"
+                         title="toggle Area visibility"
                          @click.stop="showHideArea"/>
       <font-awesome-icon :icon="faTrash" style="cursor: pointer" @click.stop="removeArea"/>
     </template>

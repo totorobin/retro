@@ -14,5 +14,8 @@ export default defineConfig({
             '/download': 'http://localhost:3000',
             '/data': 'http://localhost:3000'
         }
+    },
+    build: {
+        commonjsOptions: {include: []}
     }
 })

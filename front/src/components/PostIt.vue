@@ -37,7 +37,7 @@
 import {OnClickOutside} from '@vueuse/components'
 import {PostIt} from "@retro/shared";
 import {computed, ref} from "vue";
-import {type Position, useDraggable} from "@vueuse/core"
+import {useDraggable} from "@vueuse/core"
 import {useBoardStore} from "../stores/board.ts";
 import ContextMenu from "./ContextMenu.vue";
 import {useUserStore} from '../stores/users.ts';
@@ -55,10 +55,11 @@ const userStore = useUserStore()
 const own = ref(userStore.me?.uuid === props.data.owner)
 
 
-const setDraggable = (evt: MouseEvent & { target: HTMLElement }) => {
+const setDraggable = (evt: MouseEvent) => {
+  const target = evt.target as HTMLElement
   if (own.value && evt.target) {
     const moved = ref(false)
-    useDraggable(evt.target, {
+    useDraggable(target, {
       onEnd: () => {
         if (moved.value) {
           updateComponent(props.data)
@@ -95,11 +96,12 @@ const onClick = () => {
     editing.value = true
   }
 }
-const onTextChange = (evt: FocusEvent & { target: { innerText: string } }) => {
-  if (props.data.text !== evt.target.innerText) {
-    props.data.text = evt.target.innerText
+const onTextChange = (evt: FocusEvent) => {
+  const target = evt.target as HTMLElement
+  if (props.data.text !== target.innerText) {
+    props.data.text = target.innerText
     updateComponent({...props.data})
-    evt.target.innerText = props.data.text // Fix duplicating text on edit
+    target.innerText = props.data.text // Fix duplicating text on edit
   }
   editing.value = false
 }

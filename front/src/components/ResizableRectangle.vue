@@ -2,28 +2,32 @@
 
 import {OnClickOutside} from "@vueuse/components";
 import {type Position, useDraggable} from "@vueuse/core";
+import {useAttrs} from "vue";
 
-const top = defineModel<number>('top')
-const left = defineModel<number>('left')
-const width = defineModel<number>('width')
-const height = defineModel<number>('height')
+const top = defineModel<number>('top', {default: 0});
+const left = defineModel<number>('left', {default: 0})
+const width = defineModel<number>('width', {default: 0})
+const height = defineModel<number>('height', {default: 0})
 const edition = defineModel<boolean>('edition')
 const props = defineProps<{ editable: boolean, containterElement: HTMLElement | null }>()
 const emits = defineEmits<{
   end: [top: number, left: number, width: number, height: number]
 }>()
 
+const attrs = useAttrs() as { style: Object, class: string[] }
+
 const LIGN_WEIGHT = 20
 
-const setDraggable = (evt: MouseEvent & { target: HTMLElement }, border: string) => {
+const setDraggable = (evt: MouseEvent, border: string) => {
+  const target = evt.target as HTMLElement
   if (edition.value && evt.target) {
-    useDraggable(evt.target, {
+    useDraggable(target, {
       onEnd: (_pos: Position, _evt: PointerEvent) => {
-        emits('end', top.value, left.value, width.value, height.value)
+        emits('end', top.value, (left.value), (width.value), (height.value))
       },
       onMove: (event) => {
-        const _top = top.value;
-        const _left = left.value;
+        const _top = Number(top.value);
+        const _left = Number(left.value);
         switch (border) {
           case 'area-top':
             top.value = event.y + LIGN_WEIGHT / 2;
@@ -31,7 +35,7 @@ const setDraggable = (evt: MouseEvent & { target: HTMLElement }, border: string)
             break;
           case 'area-left':
             left.value = event.x + LIGN_WEIGHT / 2;
-            width.value = Math.max(20, -(event.x + LIGN_WEIGHT / 2) + _left + width.value);
+            width.value = Math.max(20, -(event.x + LIGN_WEIGHT / 2) + _left + (width.value));
             break;
           case 'area-right':
             width.value = Math.max(20, event.x - left.value + LIGN_WEIGHT / 2);
@@ -78,15 +82,14 @@ const setDraggable = (evt: MouseEvent & { target: HTMLElement }, border: string)
 
 <template>
   <div
-      :class="[$attrs.class, {visibleBorder : edition}]"
+      :class="[attrs.class, {visibleBorder : edition}]"
       :style="{
-            position: 'absolute',
-            left: left + 'px',
-            top: top + 'px',
-            width: width + 'px',
-            height: height + 'px',
-            ...$attrs.style,
-        }"
+  position: 'absolute',
+  left: left + 'px',
+  top: top + 'px',
+  width: width + 'px',
+  height: height + 'px',
+  ...attrs.style}"
       @click="editable ? edition = true : false">
     <slot></slot>
   </div>

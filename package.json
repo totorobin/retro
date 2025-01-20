@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "pnpm run --parallel dev",
+    "build": "pnpm run --parallel build",
     "test": "pnpm bddgen && pnpm playwright test",
     "back": "pnpm run --filter \"@retro/back\" dev",
     "front": "pnpm run --filter \"@retro/front\" dev"

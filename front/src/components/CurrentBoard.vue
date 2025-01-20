@@ -29,7 +29,7 @@ import {computed, nextTick, ref} from "vue";
 import {useBoardStore} from "../stores/board.ts";
 import UsersMenu from "./UsersMenu.vue";
 import PostItComp from './PostIt.vue'
-import {type Area, type Picture, type PostIt} from "@retro/shared";
+import {type Area, type Picture, type PostIt, type BoardComponent} from "@retro/shared";
 import {useDraggable, useDropZone} from "@vueuse/core";
 import {useUserStore} from "../stores/users.ts";
 import TestRec from "./PostItArea.vue";
