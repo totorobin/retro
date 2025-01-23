@@ -1,30 +1,43 @@
+FROM node:20-slim AS base
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+RUN corepack enable
+COPY . /app
+WORKDIR /app
+
+
+# -------------->  prod deps
+FROM base as prod-deps
+
+
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --prod
+
 # -------------->  build image
-FROM node:21-slim as build
-RUN npm install -g pnpm@latest-10
-
-WORKDIR /usr/src
-COPY . .
+FROM base as build
 
 
-RUN pnpm install --force
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --force
 
 # Bundle app source
 RUN pnpm run build
 
 
 # --------------> The production image
-FROM node:21-slim
-ENV NODE_ENV production
-RUN npm install -g pnpm@latest-10
+FROM node:20-slim AS base
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+RUN corepack enable
 
-# Create app directory
-WORKDIR /usr/src/app
+WORKDIR /app
 
-COPY --from=build /usr/src/back/dist ./
-COPY --from=build /usr/src/front/dist public
+COPY --from=prod-deps /app/back/node_modules /app/node_modules
+COPY --from=prod-deps /app/node_modules /node_modules
+
+COPY --from=build /app/back/dist /app/
+COPY --from=build /app/front/dist /app/public
 
 ENV PORT 8080
 EXPOSE 8080
 
 USER node
-CMD [ "node", "index.js" ]
+CMD [ "node", "/app/index.js" ]
