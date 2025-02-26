@@ -78,6 +78,10 @@ export default function ({userRepo, boardRepo}: Components, emitter: EventEmitte
                     return
                 }
 
+                if(socket.data.userId === undefined) {
+                    console.log('you cannot join if you are not logged')
+                    return
+                }
                 // si nouvel utilisateur : mise a jour du board
                 if (!board.users.find(uuid => uuid === socket.data.userId)) {
                     board.users.push(socket.data.userId);
@@ -88,6 +92,7 @@ export default function ({userRepo, boardRepo}: Components, emitter: EventEmitte
                 // socket est lié à la board
                 socket.join(`board-${boardId}`);
 
+                emitter.emit('broadcastBoards', [boardId])
             },
         leaveBoard: (io: Server, socket: Socket) => async function (boardId: string) {
             console.log(`user ${socket.data.userId} leaving board ${boardId}`);

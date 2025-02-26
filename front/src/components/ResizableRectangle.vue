@@ -2,7 +2,7 @@
 
 import {OnClickOutside} from "@vueuse/components";
 import {type Position, useDraggable} from "@vueuse/core";
-import {useAttrs} from "vue";
+import {useAttrs, computed} from "vue";
 
 const top = defineModel<number>('top', {default: 0});
 const left = defineModel<number>('left', {default: 0})
@@ -73,7 +73,7 @@ const setDraggable = (evt: MouseEvent, border: string) => {
       capture: true,
       exact: true,
       stopPropagation: true,
-      disabled: () => !edition.value,
+      disabled: computed(() => !edition.value),
       containerElement: props.containterElement
     })
   }

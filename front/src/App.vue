@@ -23,7 +23,7 @@ roomStore.bindEvents();
 <template>
   <div>
     <LoginForm v-if="!connectionStore.loggedIn"/>
-    <div v-else-if="!connectionStore.state.connected && connectionStore.state.firstConnection">
+    <div v-else-if="(!connectionStore.state.connected && connectionStore.state.firstConnection) || !userStore.me">
       Connecting
     </div>
     <div v-else>

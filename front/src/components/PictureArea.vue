@@ -50,5 +50,7 @@ const {backwardAll, backward, forward, forwardAll} = useLayerOrder()
 img {
   width: 100%;
   height: 100%;
+  user-drag: none;
+  -webkit-user-drag: none;
 }
 </style>

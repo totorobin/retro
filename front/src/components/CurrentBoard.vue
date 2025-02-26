@@ -20,7 +20,7 @@
         </template>
       </div>
     </div>
-    <UsersMenu :users="board.users" class="panel-right-top" @focusUser="focusUser"></UsersMenu>
+    <UsersMenu :users="board.users" class="panel-right-top" :focusedUser="focusedUser" @focusUser="focusUser"></UsersMenu>
   </div>
 </template>
 

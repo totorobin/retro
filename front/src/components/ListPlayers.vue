@@ -1,7 +1,7 @@
 <template>
   <div>
-    <div v-for="p in players" :key="p.uuid" class="row">
-      <div>{{ p.name + (p.uuid === me?.uuid ? ' (vous) ' : '') }}</div>
+    <div v-for="p in players" :key="p.uuid" class="row" :title="p.name">
+      <div>{{ p.name + (p.uuid === me?.uuid ? ' (vous)' : '') }}</div>
       <div>{{ (p.loggedIn ? '🔗' : '⛓️‍💥') }}</div>
     </div>
   </div>
