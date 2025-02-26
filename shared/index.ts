@@ -7,10 +7,11 @@ export interface User {
 }
 
 export interface BoardComponent {
-    id?: string;
-    owner?: string;
+    id: string;
+    owner: string;
     type: string;
     position: number[];
+    priority: number;
 }
 
 export interface PostIt extends BoardComponent {
@@ -24,6 +25,12 @@ export interface Area extends BoardComponent {
     title: string;
     visible: boolean;
     forceVisiblility: boolean | null;
+    lock: boolean;
+}
+
+export interface Picture extends BoardComponent {
+    imageId: string;
+    lock: boolean;
 }
 
 export interface Board {
@@ -49,15 +56,15 @@ export interface ServerToClientEvents {
 
 export interface ClientToServerEvents {
     login: (me: Partial<User>) => void;
-    myBoards: (callback: (myBoards : Array<SavedBoard>) => void) => void;
+    myBoards: (callback: (myBoards: Array<SavedBoard>) => void) => void;
     newBoard: (
         boardId: string | null,
         callback: (boardId: string) => void
     ) => void;
     joinBoard: (boardId: string) => void
     leaveBoard: (boardId: string) => void
-    addComponent: (boardId: string, component: BoardComponent, callback: (componentId: string) => void) => void
-    updateComponent: (boardId: string, component: BoardComponent) => void
+    addComponent: (boardId: string, component: Partial<BoardComponent>, callback: (componentId: string) => void) => void
+    updateComponent: (boardId: string, component: Partial<BoardComponent>) => void
     deleteComponent: (boardId: string, componentId: string) => void
 }
 

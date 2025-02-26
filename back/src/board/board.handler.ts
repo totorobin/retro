@@ -2,10 +2,10 @@ import {v4 as uuid} from "uuid";
 import {Components} from "../app";
 import {Server, Socket} from "socket.io";
 import {EventEmitter} from 'events'
-import {SavedBoard, BoardComponent, PostIt, Area} from "@retro/shared";
+import {Area, BoardComponent, PostIt, SavedBoard} from "@retro/shared";
 
 const updatePostItColor = (board: SavedBoard, component: PostIt) => {
-   const areas : Area[] = board.components
+    const areas: Area[] = board.components
         .filter(c => c.type === 'area').map(c => c as Area)
         .filter(c => c.position[0] < component.position[0] && component.position[0] < c.position[2])
         .filter(c => c.position[1] < component.position[1] && component.position[1] < c.position[3])
@@ -19,8 +19,8 @@ const updatePostItColor = (board: SavedBoard, component: PostIt) => {
     }
 }
 const updateAllPostIt = (board: SavedBoard, component: Area) => {
-    if(component.color || component.forceVisiblility != null)
-        board.components.filter(c=> c.type === 'postIt').map(c => c as PostIt)
+    if (component.color || component.forceVisiblility != null)
+        board.components.filter(c => c.type === 'postIt').map(c => c as PostIt)
             .filter(pi => component.position[0] < pi.position[0] && pi.position[0] < component.position[2])
             .filter(pi => component.position[1] < pi.position[1] && pi.position[1] < component.position[3])
             .map(pi => {
@@ -32,9 +32,9 @@ const updateAllPostIt = (board: SavedBoard, component: Area) => {
 }
 export default function ({userRepo, boardRepo}: Components, emitter: EventEmitter) {
     return {
-        myBoards: (io: Server, socket: Socket) => async function (callback: (myBoards : Array<SavedBoard>) => void) {
+        myBoards: (io: Server, socket: Socket) => async function (callback: (myBoards: Array<SavedBoard>) => void) {
             try {
-               let boards = await boardRepo.findAllByUser(socket.data.userId);
+                let boards = await boardRepo.findAllByUser(socket.data.userId);
                 callback(boards);
                 console.log("myBoards sent", boards);
             } catch (e) {
@@ -94,9 +94,10 @@ export default function ({userRepo, boardRepo}: Components, emitter: EventEmitte
             socket.leave(`board-${boardId}`);
         },
         addComponent: (io: Server, socket: Socket) =>
-            async function (boardId: string, component: BoardComponent, callback: (componentId: string) => void) {
+            async function (boardId: string, component: Partial<BoardComponent>, callback: (componentId: string) => void) {
                 component.id = uuid();
                 component.owner = socket.data.userId;
+                component.priority = 0;
 
                 let board: SavedBoard;
                 try {
@@ -106,8 +107,8 @@ export default function ({userRepo, boardRepo}: Components, emitter: EventEmitte
                     socket.emit("kickOut")
                     return
                 }
-                board.components.push(component);
-                if(component.type === 'postIt') {
+                board.components.push(component as BoardComponent);
+                if (component.type === 'postIt') {
                     updatePostItColor(board, component as PostIt)
                 }
                 await boardRepo.save(board)
@@ -118,7 +119,7 @@ export default function ({userRepo, boardRepo}: Components, emitter: EventEmitte
                 callback(component.id);
             },
         updateComponent: (io: Server, socket: Socket) =>
-            async function (boardId: string, component: BoardComponent) {
+            async function (boardId: string, component: Partial<BoardComponent>) {
                 let board: SavedBoard;
                 try {
                     board = await boardRepo.findById(boardId);
@@ -130,9 +131,9 @@ export default function ({userRepo, boardRepo}: Components, emitter: EventEmitte
 
                 const originalComponent = board.components.find(c => c.id === component.id);
                 if (originalComponent && originalComponent.owner === socket.data.userId) {
-                    if(component.type === 'postIt') {
+                    if (component.type === 'postIt') {
                         updatePostItColor(board, component as PostIt)
-                    } else if(component.type === 'area') {
+                    } else if (component.type === 'area') {
                         updateAllPostIt(board, component as Area)
                     }
                     Object.assign(originalComponent, component);

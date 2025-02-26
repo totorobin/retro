@@ -1,12 +1,12 @@
 import {defineStore} from "pinia";
-import {Area, Board, BoardComponent, PostIt} from "@retro/shared";
+import {Area, Board, BoardComponent, Picture, PostIt} from "@retro/shared";
 import {ref} from "vue";
 import {socket} from "../socket.ts";
 import {useRouter} from "vue-router";
 
 export const useBoardStore = defineStore("board", () => {
     const router = useRouter();
-    const board = ref<Board|null>();
+    const board = ref<Board | null>();
 
     const bindEvents = () => {
         socket.on("board", (_board: Board) => {
@@ -39,7 +39,7 @@ export const useBoardStore = defineStore("board", () => {
 
     const createPostIt = (pos: number[], callback: (componentId: string) => void) => {
         if (board.value) {
-            const component: PostIt = {
+            const component: Partial<PostIt> = {
                 position: pos,
                 type: 'postIt',
                 text: '',
@@ -51,14 +51,26 @@ export const useBoardStore = defineStore("board", () => {
     }
 
     const createArea = (pos: number[], callback: (componentId: string) => void) => {
-        if(board.value) {
-            const component: Area = {
+        if (board.value) {
+            const component: Partial<Area> = {
                 position: pos,
                 type: 'area',
                 color: '',
                 title: '',
                 visible: true,
-                forceVisiblility: null
+                forceVisiblility: null,
+                lock: false,
+            }
+            socket.emit('addComponent', board.value.uuid, component, callback)
+        }
+    }
+    const createPicture = (pos: number[], imageId: string, callback: (componentId: string) => void) => {
+        if (board.value) {
+            const component: Partial<Picture> = {
+                position: pos,
+                type: 'picture',
+                imageId: imageId,
+                lock: false
             }
             socket.emit('addComponent', board.value.uuid, component, callback)
         }
@@ -87,6 +99,7 @@ export const useBoardStore = defineStore("board", () => {
         createPostIt,
         updateComponent,
         deleteComponent,
-        createArea
+        createArea,
+        createPicture
     };
 });

@@ -2,9 +2,8 @@ import {Errors} from "../utils";
 import {SavedBoard} from "@retro/shared";
 
 
-
 export class BoardRepository {
-    private readonly board: Map<string, SavedBoard> = new Map(); 
+    private readonly board: Map<string, SavedBoard> = new Map();
 
     findAll(): Promise<SavedBoard[]> {
         const entities = Array.from(this.board.values());

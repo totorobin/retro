@@ -1,8 +1,9 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import {ref} from "vue";
-import { useRouter } from 'vue-router'
-import { googleLogout } from "vue3-google-login"
-import { useConnectionStore } from "../stores/connection.ts"
+import {useRouter} from 'vue-router'
+import {googleLogout} from "vue3-google-login"
+import {useConnectionStore} from "../stores/connection.ts"
+
 const menuVisible = ref(false);
 
 const toggleMenu = () => {
@@ -14,7 +15,7 @@ const home = () => {
   router.push('/')
 }
 
-const { disconnect } = useConnectionStore();
+const {disconnect} = useConnectionStore();
 const logout = () => {
   googleLogout()
   disconnect()
@@ -23,7 +24,7 @@ const logout = () => {
 
 <template>
   <div class="panel-top-right button-menu">
-    <div id="nav-icon1" @click="toggleMenu" :class="{open: menuVisible}">
+    <div id="nav-icon1" :class="{open: menuVisible}" @click="toggleMenu">
       <span></span>
       <span></span>
       <span></span>
@@ -46,6 +47,7 @@ const logout = () => {
   height: fit-content;
   box-shadow: -2px 2px 2px rgba(0, 0, 0, 0.2);
 }
+
 menu {
   margin-top: 0;
   margin-right: 52px;
@@ -64,6 +66,7 @@ menu li {
   cursor: pointer;
   display: inline-flex;
 }
+
 menu li:hover {
   background-color: var(--primary-color);
   color: var(--background-color-dark);

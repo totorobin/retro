@@ -10,7 +10,12 @@ export default defineConfig({
             '/socket.io': {
                 target: 'ws://localhost:3000',
                 ws: true
-            }
+            },
+            '/download': 'http://localhost:3000',
+            '/data': 'http://localhost:3000'
         }
+    },
+    build: {
+        commonjsOptions: {include: []}
     }
 })

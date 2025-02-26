@@ -20,7 +20,7 @@ defineProps<{
 }>()
 
 defineEmits<{
-  focusUser: [userId :string]
+  focusUser: [userId: string]
 }>()
 
 

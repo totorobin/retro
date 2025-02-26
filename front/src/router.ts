@@ -3,7 +3,7 @@ import {createRouter, createWebHistory} from "vue-router";
 import HomeView from "./pages/HomeView.vue";
 import RoomView from "./pages/BoardView.vue";
 
-import { useBoardStore } from "./stores/board.ts";
+import {useBoardStore} from "./stores/board.ts";
 
 
 const routes = [
@@ -12,13 +12,13 @@ const routes = [
         path: "/r/:boardId",
         component: RoomView,
         props: true,
-        beforeEnter: (to:any, from:any) => {
-            console.log("beforeEnter",to,from);
-            if(!to.params.boardId){
+        beforeEnter: (to: any, from: any) => {
+            console.log("beforeEnter", to, from);
+            if (!to.params.boardId) {
                 console.log("no boardId");
                 return false
             }
-            const { joinBoard } = useBoardStore();
+            const {joinBoard} = useBoardStore();
             joinBoard(to.params.boardId);
         },
     }

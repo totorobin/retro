@@ -1,6 +1,6 @@
 import {defineStore} from "pinia";
 import {socket} from "../socket.ts";
-import {Board, SavedBoard, User} from "@retro/shared";
+import {SavedBoard, User} from "@retro/shared";
 import {ref} from "vue";
 
 export const useUserStore = defineStore("users", () => {
@@ -19,8 +19,8 @@ export const useUserStore = defineStore("users", () => {
 
     const myBoards = () => {
         console.log("asked for Boards");
-        return new Promise((resolve) => socket.emit("myBoards", (myBoards : Array<SavedBoard>) =>  {
-           console.log("myBoards", myBoards);
+        return new Promise<SavedBoard[]>((resolve) => socket.emit("myBoards", (myBoards: Array<SavedBoard>) => {
+            console.log("myBoards", myBoards);
             resolve(myBoards);
         }));
     }

@@ -4,7 +4,6 @@ import {socket} from "./socket.ts";
 import {useUserStore} from "./stores/users.ts";
 import {useBoardStore} from "./stores/board.ts";
 import LoginForm from "./components/LoginForm.vue";
-import LoggedUser from "./components/LoggedUser.vue";
 import ReconnectionAlert from "./components/ReconnectionAlert.vue";
 
 const connectionStore = useConnectionStore();

@@ -1,53 +1,51 @@
 <template>
-    <OnClickOutside @trigger="onClickOutside">
-      <div
-          @mouseover="setDraggable"
-          class="post-it"
-          :class="[data.color, $attrs.class, {own, editing, 'redacted-script-regular': !data.visible && !own, 'own-hidden': !data.visible && own}]"
-          :style="{ left: data.position[0] - 50 + 'px', top: data.position[1] - 40 + 'px', transition: own ? '' : 'all 0.2s ease'}"
-          @contextmenu.prevent="showContextMenu($event)"
-          @click.self.prevent="onClick"
+  <OnClickOutside @trigger="onClickOutside">
+    <div
+        :class="[data.color, $attrs.class, {own, editing, 'redacted-script-regular': !data.visible && !own}]"
+        :style="{ left: data.position[0] - 50 + 'px', top: data.position[1] - 40 + 'px', transition: own ? '' : 'all 0.2s ease'}"
+        class="post-it"
+        @mouseover="setDraggable"
+        @contextmenu.prevent="showContextMenu($event)"
+        @click.self.prevent="onClick"
 
+    >
+      <div :id="data.id"
+           :contenteditable="own && editing"
+           class="inpostit"
+           @blur="onTextChange"
       >
-        <div class="inpostit"
-                    :contenteditable="own && editing"
-                    @blur="onTextChange"
-             :id="data.id"
-        >
-          {{ hidetext }}
-        </div>
-        <div v-if="own" @click="handleActionClick('toggleVisible')" class="show-hide-btn" :title="
-          data.visible ? 'Le texte est visible: Cliquer pour le cacher' : 'Le texte est caché: Cliquer pour le rendre lisible'
-      ">
-          <font-awesome-icon v-if="data.visible" :icon="faFont" style=""/>
-          <font-awesome-icon v-else :icon="faSignature" style=""/>
-        </div>
+        {{ hidetext }}
       </div>
-    </OnClickOutside>
+      <div v-if="own" class="show-hide-btn" @click="handleActionClick('toggleVisible')">
+        <font-awesome-icon v-if="data.visible" :icon="faFont" style=""/>
+        <font-awesome-icon v-else :icon="faSignature" style=""/>
+      </div>
+    </div>
+  </OnClickOutside>
 
-    <ContextMenu
-        v-if="showMenu"
-        :actions="contextMenuActions"
-        :x="menuX"
-        :y="menuY"
-        @action-clicked="handleActionClick"
-    />
+  <ContextMenu
+      v-if="showMenu"
+      :actions="contextMenuActions"
+      :x="menuX"
+      :y="menuY"
+      @action-clicked="handleActionClick"
+  />
 
 </template>
 
 <script lang="ts" setup>
 import {OnClickOutside} from '@vueuse/components'
 import {PostIt} from "@retro/shared";
-import {ref, computed} from "vue";
-import {type Position, useDraggable} from "@vueuse/core"
+import {computed, ref} from "vue";
+import {useDraggable} from "@vueuse/core"
 import {useBoardStore} from "../stores/board.ts";
 import ContextMenu from "./ContextMenu.vue";
-import { useUserStore } from '../stores/users.ts';
-import { faFont, faSignature} from "@fortawesome/free-solid-svg-icons";
+import {useUserStore} from '../stores/users.ts';
+import {faFont, faSignature} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 
-const props = defineProps<{ data: PostIt, board: HTMLElement|null }>()
-defineOptions({ inheritAttrs: false })
+const props = defineProps<{ data: PostIt, board: HTMLElement | null }>()
+defineOptions({inheritAttrs: false})
 
 
 const {updateComponent, deleteComponent} = useBoardStore();
@@ -57,24 +55,27 @@ const userStore = useUserStore()
 const own = ref(userStore.me?.uuid === props.data.owner)
 
 
-const setDraggable = (evt : MouseEvent & { target : HTMLElement}) => {
-  if(own.value &&  evt.target) {
+const setDraggable = (evt: MouseEvent) => {
+  const target = evt.target as HTMLElement
+  if (own.value && evt.target) {
     const moved = ref(false)
-    useDraggable(evt.target, {
-      onEnd: (position: Position, _evt: PointerEvent) => {
+    useDraggable(target, {
+      onEnd: () => {
         if (moved.value) {
           updateComponent(props.data)
           moved.value = false
         } else {
           editing.value = true
         }
-        setTimeout(() => {dragging.value = false}, 100) // Delay to prevent onClick to trigger
+        setTimeout(() => {
+          dragging.value = false
+        }, 100) // Delay to prevent onClick to trigger
       },
       onStart: () => {
         dragging.value = true
         editing.value = false
       },
-      onMove :(event) => {
+      onMove: (event) => {
         moved.value = true
         props.data.position = [event.x + 50, event.y + 40]
       },
@@ -82,7 +83,7 @@ const setDraggable = (evt : MouseEvent & { target : HTMLElement}) => {
       capture: true,
       exact: true,
       stopPropagation: true,
-      containerElement : props.board,
+      containerElement: props.board,
       disabled: () => editing.value
     })
   }
@@ -91,15 +92,16 @@ const setDraggable = (evt : MouseEvent & { target : HTMLElement}) => {
 
 const onClick = () => {
   console.log('onClick')
-  if(!dragging.value) {
+  if (!dragging.value) {
     editing.value = true
   }
 }
-const onTextChange = (evt: FocusEvent & { target: { innerText: string } }) => {
-  if (props.data.text !== evt.target.innerText) {
-    props.data.text = evt.target.innerText
+const onTextChange = (evt: FocusEvent) => {
+  const target = evt.target as HTMLElement
+  if (props.data.text !== target.innerText) {
+    props.data.text = target.innerText
     updateComponent({...props.data})
-    evt.target.innerText = props.data.text // Fix duplicating text on edit
+    target.innerText = props.data.text // Fix duplicating text on edit
   }
   editing.value = false
 }
@@ -110,27 +112,29 @@ const onClickOutside = () => {
 const showMenu = ref(false);
 const menuX = ref(0);
 const menuY = ref(0);
-const contextMenuActions = computed(() =>[
+const contextMenuActions = computed(() => [
   {label: 'Delete', style: '', action: 'delete'},
-  {label: props.data.visible ? 'Hide' : 'Show',  style: '', action: 'toggleVisible'},
-  {label: '', style: '', action: [
-      { label: ' ', style: 'background-color: var(--green-post-it); width:10px; height:10px' , action: 'color-green' },
-      { label: ' ', style: 'background-color: var(--yellow-post-it); width:10px; height:10px' , action: 'color-yellow' },
-      { label: ' ', style: 'background-color: var(--orange-post-it); width:10px; height:10px' , action: 'color-orange' },
-      { label: ' ', style: 'background-color: var(--red-post-it); width:10px; height:10px' , action: 'color-red' },
-      { label: ' ', style: 'background-color: var(--blue-post-it); width:10px; height:10px' , action: 'color-blue' }
-    ]},
+  {label: props.data.visible ? 'Hide' : 'Show', style: '', action: 'toggleVisible'},
+  {
+    label: '', style: '', action: [
+      {label: ' ', style: 'background-color: var(--green-post-it); width:10px; height:10px', action: 'color-green'},
+      {label: ' ', style: 'background-color: var(--yellow-post-it); width:10px; height:10px', action: 'color-yellow'},
+      {label: ' ', style: 'background-color: var(--orange-post-it); width:10px; height:10px', action: 'color-orange'},
+      {label: ' ', style: 'background-color: var(--red-post-it); width:10px; height:10px', action: 'color-red'},
+      {label: ' ', style: 'background-color: var(--blue-post-it); width:10px; height:10px', action: 'color-blue'}
+    ]
+  },
 ]);
 
 const rot13 = (text: string) => text.split('')
     .map(char => char === ' ' ? ' ' : String.fromCharCode(char.charCodeAt(0) + (char.toLowerCase() < 'n' ? 13 : -13)))
     .join('');
 
-const hidetext = computed(() =>  (!props.data.visible && !own.value) ? rot13(props.data.text) : props.data.text);
+const hidetext = computed(() => (!props.data.visible && !own.value) ? rot13(props.data.text) : props.data.text);
 
 
-const showContextMenu = (event: PointerEvent) => {
-  if(own.value) {
+const showContextMenu = (event: MouseEvent) => {
+  if (own.value) {
     event.preventDefault();
     showMenu.value = true;
     menuX.value = event.clientX;
@@ -153,7 +157,7 @@ const handleActionClick = (action: string) => {
       updateComponent(props.data)
       break;
     case 'toggleVisible':
-      if(props.data.id) {
+      if (props.data.id) {
         props.data.visible = !props.data.visible;
         updateComponent(props.data)
       }
@@ -178,17 +182,21 @@ const handleActionClick = (action: string) => {
   box-shadow: 0 5px 10px -5px #000;
 
 }
+
 .post-it.own {
   cursor: grab;
 }
+
 .post-it.own:hover:not(.editing) {
   border: 1px solid black;
   margin: -1px; /* compensate for border width */
 }
+
 .post-it.editing {
   border: 1px dashed var(--border-color);
   margin: -1px; /* compensate for border width */
 }
+
 .inpostit {
   width: 100px;
   min-height: 80px; /* Will elongate if too much text */
@@ -201,10 +209,12 @@ const handleActionClick = (action: string) => {
   /* Add space at the end for buttons */
   margin-bottom: .5em;
 }
+
 .post-it.editing .inpostit[contenteditable] {
   outline: 0px solid transparent;
   cursor: text;
 }
+
 .post-it:active {
   cursor: grabbing;
 }

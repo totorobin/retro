@@ -1,4 +1,11 @@
 node_modules
+/*/node_modules
 /.features-gen/
 /playwright-report/
 /test-results/
+/back/files/pictures/*
+
+Dockerfile
+.git
+.gitignore
+dist
