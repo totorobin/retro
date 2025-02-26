@@ -19,14 +19,23 @@ export interface PostIt extends BoardComponent {
     visible: boolean;
 }
 
+export interface Area extends BoardComponent {
+    color: string;
+    title: string;
+    visible: boolean;
+    forceVisiblility: boolean | null;
+}
+
 export interface Board {
     uuid: string
+    ownerId: string
     users: Array<User>
     components: Array<BoardComponent>
 }
 
 export interface SavedBoard {
     uuid: string,
+    ownerId: string
     users: string[],
     components: BoardComponent[],
 }

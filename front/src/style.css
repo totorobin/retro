@@ -11,7 +11,8 @@
     --green-post-it: #cbf078;
     --orange-post-it: #f1b963; 
     --red-post-it: #e46161;
-    --primary-color: #d3531a
+    --blue-post-it: #7dafff;
+    --primary-color: #cbf078;
 }
 
 
@@ -44,8 +45,9 @@
         --font-color: #fff;
         --yellow-post-it: darkgoldenrod;
         --green-post-it: #7e964b;
-        --orange-post-it: #ecb56277; 
-        --red-post-it: #e461617e; 
+        --orange-post-it: #ecb56277;
+        --red-post-it: #a35050;
+        --blue-post-it: #5070a3;
     }
 }
 
