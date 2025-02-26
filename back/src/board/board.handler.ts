@@ -11,8 +11,10 @@ const updatePostItColor = (board: SavedBoard, component: PostIt) => {
         .filter(c => c.position[1] < component.position[1] && component.position[1] < c.position[3])
         .slice(-1)
 
-    if (areas.length == 1) {
-        component.color = areas[0].color
+    if(areas.length == 1) {
+        if(areas[0].color) {
+            component.color = areas[0].color
+        }
         component.visible = areas[0].forceVisiblility ?? component.visible
     }
 }
@@ -22,7 +24,9 @@ const updateAllPostIt = (board: SavedBoard, component: Area) => {
             .filter(pi => component.position[0] < pi.position[0] && pi.position[0] < component.position[2])
             .filter(pi => component.position[1] < pi.position[1] && pi.position[1] < component.position[3])
             .map(pi => {
-                pi.color = component.color
+                if(component.color) {
+                    pi.color = component.color
+                }
                 pi.visible = component.forceVisiblility ?? pi.visible
             })
 }

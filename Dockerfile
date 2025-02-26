@@ -23,7 +23,7 @@ RUN pnpm run build
 
 
 # --------------> The production image
-FROM node:20-slim AS base
+FROM node:20-slim AS app
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 RUN corepack enable
@@ -35,6 +35,7 @@ COPY --from=prod-deps /app/node_modules /node_modules
 
 COPY --from=build /app/back/dist /app/
 COPY --from=build /app/front/dist /app/public
+RUN mkdir -p /app/files/pictures
 
 ENV PORT 8080
 EXPOSE 8080

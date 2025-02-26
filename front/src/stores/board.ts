@@ -55,7 +55,7 @@ export const useBoardStore = defineStore("board", () => {
             const component: Partial<Area> = {
                 position: pos,
                 type: 'area',
-                color: 'yellow',
+                color: '',
                 title: '',
                 visible: true,
                 forceVisiblility: null,

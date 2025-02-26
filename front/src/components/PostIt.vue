@@ -205,6 +205,9 @@ const handleActionClick = (action: string) => {
   /* Manage word break properly */
   overflow-wrap: break-word;
   border-radius: 1em; /* easier to dragndrop from corners */
+
+  /* Add space at the end for buttons */
+  margin-bottom: .5em;
 }
 
 .post-it.editing .inpostit[contenteditable] {
@@ -215,23 +218,22 @@ const handleActionClick = (action: string) => {
 .post-it:active {
   cursor: grabbing;
 }
+.post-it.own-hidden {
+  color: #666;
+}
 
 .green {
   background-color: var(--green-post-it);
 }
-
 .yellow {
   background-color: var(--yellow-post-it);
 }
-
 .orange {
   background-color: var(--orange-post-it);
 }
-
 .red {
   background-color: var(--red-post-it);
 }
-
 .blue {
   background-color: var(--blue-post-it);
 }
@@ -241,8 +243,20 @@ const handleActionClick = (action: string) => {
 }
 
 .show-hide-btn {
+  background: #EEE;
+	position: absolute;
+	left: 50%;
+	bottom: 0;
+	transform: translate(-50%, 50%);
+	border-radius: 50%;
+	width: 1em;
+	height: 1em;
   padding: 5px;
-  margin-bottom: -25px;
+	box-shadow: 0 1px 3px;
   cursor: pointer;
+  color: black;
+}
+.show-hide-btn:hover {
+	box-shadow: 0 1px 3px inset;
 }
 </style>
