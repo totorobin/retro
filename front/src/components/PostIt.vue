@@ -5,7 +5,6 @@
         :style="{ left: data.position[0] - 50 + 'px', top: data.position[1] - 40 + 'px', transition: own ? '' : 'all 0.2s ease'}"
         class="post-it"
         @mouseover="setDraggable"
-        @mouseleave="() => disabled = true"
         @contextmenu.prevent="showContextMenu($event)"
         @click.self.prevent="onClick"
 
@@ -55,12 +54,10 @@ const dragging = ref(false)
 const userStore = useUserStore()
 const own = ref(userStore.me?.uuid === props.data.owner)
 
-const disabled = ref(false)
 
 const setDraggable = (evt: MouseEvent) => {
   const target = evt.target as HTMLElement
   if (own.value && evt.target) {
-    disabled.value = false
     const moved = ref(false)
     useDraggable(target, {
       onEnd: () => {
@@ -70,7 +67,6 @@ const setDraggable = (evt: MouseEvent) => {
         } else {
           editing.value = true
         }
-        disabled.value = true
         setTimeout(() => {
           dragging.value = false
         }, 100) // Delay to prevent onClick to trigger
@@ -88,7 +84,7 @@ const setDraggable = (evt: MouseEvent) => {
       exact: true,
       stopPropagation: true,
       containerElement: props.board,
-      disabled
+      disabled: () => editing.value
     })
   }
 }
@@ -111,7 +107,6 @@ const onTextChange = (evt: FocusEvent) => {
 }
 const onClickOutside = () => {
   editing.value = false
-  disabled.value = true
 }
 
 const showMenu = ref(false);

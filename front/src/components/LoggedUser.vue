@@ -1,6 +1,6 @@
 <template>
   <div class="loggedUser panel-top-right">
-    <UserPicture :modelValue="me" />
+    <img :src="picture"/>
     <div pw-id="user-card">{{ userName }}</div>
   </div>
 </template>
@@ -8,11 +8,10 @@
 
 import {useUserStore} from "../stores/users.ts";
 import {computed} from "vue";
-import UserPicture from "./UserPicture.vue";
 
 const userStore = useUserStore()
 const userName = computed(() => userStore.me?.name || '')
-const me = computed(() => userStore.me)
+const picture = computed(() => userStore.me?.picture || '')
 
 </script>
 

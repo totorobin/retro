@@ -1,17 +1,6 @@
 <template>
-  <div class="userMenuList">
-    <div v-for="user in users"
-         class="user"
-         :class="{
-            disconnected: !user.loggedIn,
-            me: user.uuid === me.uuid,
-            focused: focusedUser == user.uuid,
-         }"
-         :style='{
-            "--username": "\"" + user.name + "\""
-         }'
-         @click="() => $emit('focusUser', focusedUser == user.uuid?null:user.uuid)"
-    >
+  <div>
+    <div v-for="user in users" :class="{ disconnected: !user.loggedIn, me: user.uuid === me.uuid}" class="user" @click="() => $emit('focusUser', user.uuid)">
       <UserPicture :modelValue="user" />
       <font-awesome-icon :icon="faCircle" class="dot" size="xs" />
     </div>
@@ -27,8 +16,7 @@ import {computed} from "vue";
 import UserPicture from "./UserPicture.vue";
 
 defineProps<{
-  users: Array<User>,
-  focusedUser: string,
+  users: Array<User>
 }>()
 
 defineEmits<{
@@ -42,9 +30,6 @@ const me = computed(() => userStore.me)
 </script>
 
 <style lang="css" scoped>
-.userMenuList {
-  user-select: none;
-}
 .user {
   position: relative;
   text-align: center;
@@ -53,6 +38,7 @@ const me = computed(() => userStore.me)
   margin: 10px;
 
   img {
+
     width: 30px;
     height: 30px;
     border-radius: 50%;
@@ -65,33 +51,19 @@ const me = computed(() => userStore.me)
     font-size: 7px;
     color: darkgreen;
   }
-
-  ::before {
-		font-size: small;
-		position: absolute;
-		margin-right: 34px;
-		top: 0;
-		right: 0;
-		bottom: 0;
-		line-height: normal;
-    content: var(--username);
-  }
-  :not(:hover)::before {
-    content: "";
-  }
 }
-.user.focused {
-  margin-left: -5px;
-  ::after {
-    content: "🔍";
-    position: absolute;
-    bottom: 0;
-    left: 90%;
-  }
+
+.me::before {
+  font-size: small;
+  content: "vous";
+  position: absolute;
+  margin-right: 34px;
+  margin-top: 7px;
+  right: 0;
 }
 
 .disconnected {
-  .user {
+  img {
     opacity: 50%;
   }
 
