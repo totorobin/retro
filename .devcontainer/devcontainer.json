@@ -1,0 +1,11 @@
+{
+  "name": "Sofa-playground",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "args": {
+      "USER_UID" : "${localEnv:UID:1000}"
+    }
+  },
+  "runArgs":["--sysctl", "net.ipv6.conf.all.disable_ipv6=1"],
+  "postCreateCommand": "bash .devcontainer/setup.sh"
+}
